@@ -1,10 +1,12 @@
+import { DATA_CACHE_TTL_MS } from "@/lib/fetch-config";
+
 interface CacheEntry<T> {
   data: T;
   timestamp: number;
 }
 
 const cache = new Map<string, CacheEntry<unknown>>();
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+const CACHE_TTL = DATA_CACHE_TTL_MS;
 
 export function getFromCache<T>(key: string): T | null {
   const entry = cache.get(key) as CacheEntry<T> | undefined;

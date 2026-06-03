@@ -1,5 +1,6 @@
 import type { NewsItem } from "@/lib/types";
 import { classifyAnnouncementKind } from "@/lib/news-classify";
+import { upstreamFetchInit } from "@/lib/fetch-config";
 
 export type EnneadNewsItem = {
   id: string;
@@ -23,7 +24,7 @@ export async function fetchEnneadNews(
     endpoints.map(async (endpoint) => {
       try {
         const res = await fetch(`${API_BASE}/${game}/news/${endpoint}?lang=en-us`, {
-          next: { revalidate: 3600 },
+          ...upstreamFetchInit,
           headers: { Accept: "application/json" },
         });
 

@@ -3,6 +3,7 @@ import type { GryphlineArticle } from "@/lib/fetchers/gryphline-types";
 import { classifyAnnouncementKind, isAnnouncementKind } from "@/lib/news-classify";
 import { parseDateRangeFromText, parseSingleDateFromText } from "@/lib/date-parse";
 import { decodeRscString, stripHtml } from "@/lib/html-utils";
+import { upstreamFetchInit } from "@/lib/fetch-config";
 
 const NEWS_URL = "https://endfield.gryphline.com/en-us/news";
 const ARTICLE_URL = "https://endfield.gryphline.com/en-us/news";
@@ -35,7 +36,7 @@ export async function fetchGryphlineArticles(): Promise<GryphlineArticle[]> {
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
       Accept: "text/html,application/xhtml+xml",
     },
-    next: { revalidate: 3600 },
+    ...upstreamFetchInit,
   });
 
   if (!res.ok) {
@@ -90,7 +91,7 @@ async function fetchGryphlineArticleDetail(
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
         Accept: "text/html,application/xhtml+xml",
       },
-      next: { revalidate: 3600 },
+      ...upstreamFetchInit,
     });
 
     if (!res.ok) return null;

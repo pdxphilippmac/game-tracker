@@ -1,19 +1,19 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import useSWR from "swr";
 import { GameId, GameData, GAMES } from "@/lib/types";
 import { GAME_CONFIG } from "@/lib/game-config";
-import { isActiveActivity, sortByEndTime } from "@/lib/activity-utils";
+import { sortByEndTime } from "@/lib/activity-utils";
+import { fetchGameData } from "@/lib/game-data-fetcher";
+import { DATA_REVALIDATE_SECONDS } from "@/lib/fetch-config";
 import { PatchStatusBanner } from "@/components/patch-status-banner";
-import { BannerCard } from "@/components/banner-card";
+import { BannerSection } from "@/components/banner-section";
 import { EventCard } from "@/components/event-card";
 import { ChallengeCard } from "@/components/challenge-card";
 import { AnnouncementCard } from "@/components/announcement-card";
 import { NewsCard } from "@/components/news-card";
 import { GameContentSkeleton } from "@/components/skeletons";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface GameContentProps {
   gameId: GameId;
@@ -50,14 +50,27 @@ function EmptyState({ message }: { message: string }) {
 }
 
 export function GameContent({ gameId }: GameContentProps) {
-  const { data, error, isLoading } = useSWR<GameData>(
+  const [bannerTab, setBannerTab] = useState("active");
+
+  useEffect(() => {
+    setBannerTab("active");
+  }, [gameId]);
+
+  const { data, error, isLoading, isValidating, mutate } = useSWR<GameData>(
     `/api/games/${gameId}`,
-    fetcher,
+    () => fetchGameData(gameId),
     {
-      refreshInterval: 5 * 60 * 1000,
-      revalidateOnFocus: false,
+      refreshInterval: DATA_REVALIDATE_SECONDS * 1000,
+      revalidateOnFocus: true,
+      revalidateOnReconnect: true,
+      dedupingInterval: 15_000,
     }
   );
+
+  async function handleRefresh() {
+    const fresh = await fetchGameData(gameId, { forceRefresh: true });
+    await mutate(fresh, { revalidate: false });
+  }
 
   const config = GAME_CONFIG[gameId];
 
@@ -80,11 +93,37 @@ export function GameContent({ gameId }: GameContentProps) {
     );
   }
 
-  const activeBanners = sortByEndTime(data.banners.filter(isActiveActivity));
-  const activeEvents = sortByEndTime(data.events.filter(isActiveActivity));
-  const activeChallenges = sortByEndTime(data.challenges.filter(isActiveActivity));
+  const activeEvents = sortByEndTime(data.events.filter((event) => {
+    const now = Date.now();
+    return event.endTime > now && event.startTime <= now;
+  }));
+  const activeChallenges = sortByEndTime(data.challenges.filter((challenge) => {
+    const now = Date.now();
+    return challenge.endTime > now && challenge.startTime <= now;
+  }));
   const announcements = data.announcements ?? [];
   const news = data.news ?? [];
+
+  const phaseLabelsByStart = new Map<number, string>();
+  if (data.patchStatus?.currentPhase?.startTime) {
+    phaseLabelsByStart.set(
+      data.patchStatus.currentPhase.startTime,
+      data.patchStatus.currentPhase.label
+    );
+  }
+  if (data.patchStatus?.nextMilestone?.startTime) {
+    phaseLabelsByStart.set(
+      data.patchStatus.nextMilestone.startTime,
+      data.patchStatus.nextMilestone.label
+    );
+  }
+
+  function showUpcomingBanners() {
+    setBannerTab("upcoming");
+    requestAnimationFrame(() => {
+      document.getElementById("banners")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
 
   const starIcon = (
     <svg
@@ -161,6 +200,7 @@ export function GameContent({ gameId }: GameContentProps) {
         gameId={gameId}
         dataError={data.error}
         officialUrl={GAMES[gameId].website}
+        onShowUpcoming={showUpcomingBanners}
       />
 
       {data.error && data.banners.length + data.events.length + data.news.length > 0 && (
@@ -169,23 +209,14 @@ export function GameContent({ gameId }: GameContentProps) {
         </div>
       )}
 
-      <section>
-        <SectionHeading
-          icon={starIcon}
-          title="Active Banners"
-          count={activeBanners.length}
-          color={config.color}
-        />
-        {activeBanners.length > 0 ? (
-          <div className="flex flex-col gap-4">
-            {activeBanners.map((banner) => (
-              <BannerCard key={String(banner.id)} banner={banner} gameId={gameId} />
-            ))}
-          </div>
-        ) : (
-          <EmptyState message="No active banners at the moment" />
-        )}
-      </section>
+      <BannerSection
+        banners={data.banners}
+        gameId={gameId}
+        icon={starIcon}
+        tab={bannerTab}
+        onTabChange={setBannerTab}
+        phaseLabelsByStart={phaseLabelsByStart}
+      />
 
       <section>
         <SectionHeading
@@ -265,15 +296,42 @@ export function GameContent({ gameId }: GameContentProps) {
         )}
       </section>
 
-      <p className="text-xs text-muted-foreground">
-        Last updated:{" "}
-        {new Date(data.lastUpdated).toLocaleString("de-DE", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
+      <p className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-muted-foreground">
+        <span>
+          Zuletzt aktualisiert:{" "}
+          {new Date(data.lastUpdated).toLocaleString("de-DE", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </span>
+        <button
+          type="button"
+          onClick={() => void handleRefresh()}
+          disabled={isValidating}
+          className={`inline-flex items-center gap-1.5 rounded-md border border-border/60 bg-card/40 px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-card/70 disabled:opacity-50 ${config.color}`}
+        >
+          <svg
+            className={`h-3.5 w-3.5 ${isValidating ? "animate-spin" : ""}`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+          {isValidating ? "Lädt…" : "Aktualisieren"}
+        </button>
+        <span className="text-muted-foreground/80">
+          Auto-Refresh alle {Math.round(DATA_REVALIDATE_SECONDS / 60)} Min.
+        </span>
       </p>
     </div>
   );

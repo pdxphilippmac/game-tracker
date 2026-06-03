@@ -9,6 +9,7 @@ import { classifyAnnouncementKind, isAnnouncementKind } from "@/lib/news-classif
 import { parseDateRangeFromText } from "@/lib/date-parse";
 import { deriveWuWaPatchStatus } from "@/lib/patch-status";
 import { emptyGameData } from "@/lib/fetchers/empty-game-data";
+import { upstreamFetchInit } from "@/lib/fetch-config";
 
 const LAUNCHER_NEWS_URL =
   "https://prod-alicdn-gamestarter.kurogame.com/launcher/50004_obOHXFrFanqsaIEOmuKroCcbZkQRBC7c/G153/information/en.json";
@@ -191,7 +192,7 @@ export async function fetchWuWaData(): Promise<GameData> {
         Accept: "application/json",
         "Accept-Encoding": "gzip, deflate",
       },
-      next: { revalidate: 3600 },
+      ...upstreamFetchInit,
     });
 
     if (!res.ok) {

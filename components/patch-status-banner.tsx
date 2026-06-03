@@ -10,6 +10,7 @@ type PatchStatusBannerProps = {
   gameId: GameId;
   dataError?: string;
   officialUrl?: string;
+  onShowUpcoming?: () => void;
 };
 
 const DATE_TIME_FORMAT: Intl.DateTimeFormatOptions = {
@@ -29,10 +30,12 @@ function MilestoneBlock({
   title,
   milestone,
   accentClass,
+  onPreview,
 }: {
   title: string;
   milestone: PatchMilestone;
   accentClass: string;
+  onPreview?: () => void;
 }) {
   return (
     <div className="rounded-lg border border-border/50 bg-background/40 p-3">
@@ -40,6 +43,11 @@ function MilestoneBlock({
         {title}
       </p>
       <p className="mt-1 text-sm font-medium text-foreground">{milestone.label}</p>
+      {milestone.featuredNames && milestone.featuredNames.length > 0 && (
+        <p className="mt-1.5 text-sm leading-snug text-foreground/90">
+          {milestone.featuredNames.join(" · ")}
+        </p>
+      )}
       <div className="mt-2 space-y-1 text-xs text-muted-foreground">
         {milestone.startTime && <p>Start: {formatTime(milestone.startTime)}</p>}
         {milestone.endTime && (
@@ -51,6 +59,15 @@ function MilestoneBlock({
           </p>
         )}
       </div>
+      {onPreview && milestone.featuredNames && milestone.featuredNames.length > 0 && (
+        <button
+          type="button"
+          onClick={onPreview}
+          className={`mt-3 text-xs font-medium ${accentClass} hover:underline`}
+        >
+          Kommende Banner anzeigen →
+        </button>
+      )}
     </div>
   );
 }
@@ -60,6 +77,7 @@ export function PatchStatusBanner({
   gameId,
   dataError,
   officialUrl,
+  onShowUpcoming,
 }: PatchStatusBannerProps) {
   const config = GAME_CONFIG[gameId];
 
@@ -143,6 +161,7 @@ export function PatchStatusBanner({
             title="Next Phase"
             milestone={patchStatus.nextMilestone}
             accentClass={config.color}
+            onPreview={onShowUpcoming}
           />
         ) : patchStatus.nextVersion ? (
           <div className="rounded-lg border border-border/50 bg-background/40 p-3">

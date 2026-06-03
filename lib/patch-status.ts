@@ -68,6 +68,9 @@ export function deriveHSRPatchStatus(
       label: inferPhaseLabel(banner.startTime, characterBanners),
       startTime: banner.startTime,
       endTime: banner.endTime,
+      featuredNames: banner.characters
+        .filter((char) => char.rarity >= 5)
+        .map((char) => char.name),
     }))
   ).sort((a, b) => (a.startTime ?? 0) - (b.startTime ?? 0));
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { GameId, GameData } from "@/lib/types";
 import { getFromCache, setInCache } from "@/lib/cache";
+import { DATA_REVALIDATE_SECONDS } from "@/lib/fetch-config";
 import { emptyGameData } from "@/lib/fetchers/empty-game-data";
 import {
   fetchHSRData,
@@ -19,6 +20,8 @@ const fetchers: Record<GameId, () => Promise<GameData>> = {
   endfield: fetchEndfieldData,
   n2e: fetchN2EData,
 };
+
+export const dynamic = "force-dynamic";
 
 export async function GET(
   request: Request,
@@ -43,7 +46,10 @@ export async function GET(
     const cached = getFromCache<GameData>(cacheKey);
     if (cached && !cached.error) {
       return NextResponse.json(cached, {
-        headers: { "X-Cache": "HIT" },
+        headers: {
+          "X-Cache": "HIT",
+          "Cache-Control": `private, max-age=0, s-maxage=${DATA_REVALIDATE_SECONDS}, stale-while-revalidate=60`,
+        },
       });
     }
   }
@@ -58,7 +64,10 @@ export async function GET(
     }
 
     return NextResponse.json(data, {
-      headers: { "X-Cache": "MISS" },
+      headers: {
+        "X-Cache": skipCache ? "BYPASS" : "MISS",
+        "Cache-Control": `private, max-age=0, s-maxage=${DATA_REVALIDATE_SECONDS}, stale-while-revalidate=60`,
+      },
     });
   } catch (error) {
     console.error(`Error fetching ${gameId} data:`, error);

@@ -2,6 +2,7 @@ export type PatchMilestone = {
   label: string;
   startTime?: number;
   endTime?: number;
+  featuredNames?: string[];
 };
 
 export type UpcomingVersion = {

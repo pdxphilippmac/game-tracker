@@ -17,6 +17,7 @@ import { isAnnouncementKind } from "@/lib/news-classify";
 import { parseDateRangeFromText } from "@/lib/date-parse";
 import { deriveHSRPatchStatus } from "@/lib/patch-status";
 import { emptyGameData } from "@/lib/fetchers/empty-game-data";
+import { upstreamFetchInit } from "@/lib/fetch-config";
 
 const API_BASE = "https://api.ennead.cc/mihoyo/starrail";
 
@@ -214,7 +215,7 @@ export async function fetchHSRData(): Promise<GameData> {
   try {
     const [calendarRes, noticeItems] = await Promise.all([
       fetch(`${API_BASE}/calendar?lang=en-us`, {
-        next: { revalidate: 3600 },
+        ...upstreamFetchInit,
         headers: { Accept: "application/json" },
       }),
       fetchEnneadNews("starrail", ["notices", "info"]),

@@ -1,5 +1,13 @@
 import type { Challenge, GameEvent } from "@/lib/types";
 
+export function isRunningActivity(item: {
+  startTime: number;
+  endTime: number;
+}): boolean {
+  const now = Date.now();
+  return item.startTime <= now && item.endTime > now;
+}
+
 export function isActiveActivity(item: {
   startTime: number;
   endTime: number;
@@ -13,6 +21,10 @@ export function isUpcomingActivity(item: {
   endTime: number;
 }): boolean {
   return item.startTime > Date.now() && item.endTime > Date.now();
+}
+
+export function sortByStartTime<T extends { startTime: number }>(items: T[]): T[] {
+  return [...items].sort((a, b) => a.startTime - b.startTime);
 }
 
 export function sortByEndTime<T extends { endTime: number }>(items: T[]): T[] {
