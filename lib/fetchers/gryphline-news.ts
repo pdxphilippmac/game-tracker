@@ -310,7 +310,7 @@ function parseEnglishDateRange(text: string): ReturnType<typeof parseDateRangeFr
 }
 
 function parseFirstEnglishDate(text: string): number | undefined {
-  const match = text.match(MONTH_DATE_PATTERN);
+  const match = [...text.matchAll(MONTH_DATE_PATTERN)][0];
   return match ? englishDateToMs(match) : undefined;
 }
 
