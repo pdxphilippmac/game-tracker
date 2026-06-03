@@ -17,7 +17,7 @@ export function EventCard({ event, gameId }: EventCardProps) {
   return (
     <Card className="interactive-card border-border/50 bg-card/50 backdrop-blur-sm">
       <CardContent className="p-0">
-        <div className="flex flex-col md:flex-row">
+        <div className="flex flex-col items-stretch md:flex-row">
           {event.imageUrl && (
             <CardMedia src={event.imageUrl} alt={event.name} variant="event" />
           )}

@@ -119,14 +119,14 @@ function BannerSpotlight({
   return (
     <div className="relative overflow-hidden rounded-xl border border-border/50 bg-background/30">
       {banner.imageUrl ? (
-        <div className="relative aspect-[16/9] w-full lg:aspect-[21/9] lg:min-h-[12rem]">
+        <div className="relative aspect-video min-h-[12rem] w-full overflow-hidden lg:aspect-[21/9] lg:min-h-[14rem]">
           <Image
             src={banner.imageUrl}
             alt={banner.name}
             fill
             priority
             sizes="(max-width: 1024px) 100vw, 60vw"
-            className="object-cover object-center"
+            className="absolute inset-0 h-full w-full object-cover object-center"
             unoptimized
           />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />

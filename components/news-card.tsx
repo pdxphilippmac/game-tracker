@@ -17,9 +17,14 @@ export function NewsCard({ news, gameId }: NewsCardProps) {
     <Card className="interactive-card group border-border/50 bg-card/40 backdrop-blur-sm">
       <a href={news.url} target="_blank" rel="noopener noreferrer" className="block">
         <CardContent className="p-0">
-          <div className="flex flex-col sm:flex-row">
+          <div className="flex flex-col items-stretch sm:flex-row">
             {news.thumbnail && (
-              <CardMedia src={news.thumbnail} alt={news.title} variant="news" />
+              <CardMedia
+                src={news.thumbnail}
+                alt={news.title}
+                variant="news"
+                className="sm:h-full sm:min-h-full"
+              />
             )}
 
             <div className="min-w-0 flex-1 p-3 sm:p-4">

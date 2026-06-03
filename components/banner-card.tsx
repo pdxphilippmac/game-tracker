@@ -87,7 +87,7 @@ export function BannerCard({ banner, gameId, featured = false, priority = false 
       )}
     >
       <CardContent className="p-0">
-        <div className={cn("flex flex-col", !featured && "md:flex-row")}>
+        <div className={cn("flex flex-col items-stretch", !featured && "md:flex-row")}>
           {banner.imageUrl && (
             <CardMedia
               src={banner.imageUrl}

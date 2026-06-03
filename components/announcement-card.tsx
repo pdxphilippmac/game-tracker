@@ -49,13 +49,17 @@ export function AnnouncementCard({ announcement, gameId }: AnnouncementCardProps
       )}
     >
       <CardContent className="p-0">
-        <div className="flex flex-col md:flex-row">
+        <div className="flex flex-col items-stretch md:flex-row">
           {announcement.thumbnail && (
-            <a {...externalLinkProps} className="block shrink-0">
+            <a
+              {...externalLinkProps}
+              className="block shrink-0 md:flex md:h-full md:self-stretch"
+            >
               <CardMedia
                 src={announcement.thumbnail}
                 alt={announcement.title}
                 variant="announcement"
+                className="h-full min-h-full w-full"
               />
             </a>
           )}
