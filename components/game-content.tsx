@@ -1,22 +1,27 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import useSWR from "swr";
 import { GameId, GameData, GAMES } from "@/lib/types";
 import { GAME_CONFIG } from "@/lib/game-config";
-import { sortByEndTime } from "@/lib/activity-utils";
+import { isRunningActivity, sortByEndTime } from "@/lib/activity-utils";
 import { fetchGameData } from "@/lib/game-data-fetcher";
 import { DATA_REVALIDATE_SECONDS } from "@/lib/fetch-config";
+import type { GameHeaderMeta } from "@/lib/game-header-meta";
+import { GameHero } from "@/components/game-hero";
 import { PatchStatusBanner } from "@/components/patch-status-banner";
 import { BannerSection } from "@/components/banner-section";
 import { EventCard } from "@/components/event-card";
 import { ChallengeCard } from "@/components/challenge-card";
 import { AnnouncementCard } from "@/components/announcement-card";
 import { NewsCard } from "@/components/news-card";
+import { EmptyState } from "@/components/empty-state";
+import { SectionNav, type SectionNavItem } from "@/components/section-nav";
 import { GameContentSkeleton } from "@/components/skeletons";
 
 interface GameContentProps {
   gameId: GameId;
+  onHeaderMetaChange?: (meta: GameHeaderMeta | null) => void;
 }
 
 function SectionHeading({
@@ -31,7 +36,7 @@ function SectionHeading({
   color: string;
 }) {
   return (
-    <h2 className={`mb-4 flex items-center gap-2 text-xl font-semibold text-foreground`}>
+    <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold text-foreground">
       <span className={color}>{icon}</span>
       {title}
       {count !== undefined && count > 0 && (
@@ -41,19 +46,13 @@ function SectionHeading({
   );
 }
 
-function EmptyState({ message }: { message: string }) {
-  return (
-    <div className="rounded-lg border border-dashed border-border/50 bg-card/30 p-8 text-center">
-      <p className="text-muted-foreground">{message}</p>
-    </div>
-  );
-}
-
-export function GameContent({ gameId }: GameContentProps) {
+export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
   const [bannerTab, setBannerTab] = useState("active");
+  const [patchDetailsOpen, setPatchDetailsOpen] = useState(false);
 
   useEffect(() => {
     setBannerTab("active");
+    setPatchDetailsOpen(false);
   }, [gameId]);
 
   const { data, error, isLoading, isValidating, mutate } = useSWR<GameData>(
@@ -64,15 +63,53 @@ export function GameContent({ gameId }: GameContentProps) {
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
       dedupingInterval: 15_000,
-    }
+    },
   );
 
-  async function handleRefresh() {
+  const handleRefresh = useCallback(async () => {
     const fresh = await fetchGameData(gameId, { forceRefresh: true });
     await mutate(fresh, { revalidate: false });
-  }
+  }, [gameId, mutate]);
 
   const config = GAME_CONFIG[gameId];
+
+  const activeBannerCount = useMemo(() => {
+    if (!data) return 0;
+    return data.banners.filter(isRunningActivity).length;
+  }, [data]);
+
+  useEffect(() => {
+    if (!onHeaderMetaChange) {
+      return;
+    }
+
+    if (!data) {
+      onHeaderMetaChange(null);
+      return;
+    }
+
+    const summaryParts: string[] = [];
+    if (activeBannerCount > 0) {
+      summaryParts.push(
+        `${activeBannerCount} active banner${activeBannerCount === 1 ? "" : "s"}`,
+      );
+    }
+    if (data.patchStatus?.currentVersion) {
+      summaryParts.push(`Patch ${data.patchStatus.currentVersion}`);
+    }
+
+    onHeaderMetaChange({
+      gameId,
+      summary: summaryParts.length > 0 ? summaryParts.join(" · ") : config.name,
+      lastUpdated: data.lastUpdated,
+      isValidating,
+      onRefresh: () => {
+        void handleRefresh();
+      },
+    });
+
+    return () => onHeaderMetaChange(null);
+  }, [data, gameId, activeBannerCount, isValidating, onHeaderMetaChange, config.name, handleRefresh]);
 
   if (isLoading) {
     return <GameContentSkeleton />;
@@ -93,14 +130,18 @@ export function GameContent({ gameId }: GameContentProps) {
     );
   }
 
-  const activeEvents = sortByEndTime(data.events.filter((event) => {
-    const now = Date.now();
-    return event.endTime > now && event.startTime <= now;
-  }));
-  const activeChallenges = sortByEndTime(data.challenges.filter((challenge) => {
-    const now = Date.now();
-    return challenge.endTime > now && challenge.startTime <= now;
-  }));
+  const activeEvents = sortByEndTime(
+    data.events.filter((event) => {
+      const now = Date.now();
+      return event.endTime > now && event.startTime <= now;
+    }),
+  );
+  const activeChallenges = sortByEndTime(
+    data.challenges.filter((challenge) => {
+      const now = Date.now();
+      return challenge.endTime > now && challenge.startTime <= now;
+    }),
+  );
   const announcements = data.announcements ?? [];
   const news = data.news ?? [];
 
@@ -108,15 +149,18 @@ export function GameContent({ gameId }: GameContentProps) {
   if (data.patchStatus?.currentPhase?.startTime) {
     phaseLabelsByStart.set(
       data.patchStatus.currentPhase.startTime,
-      data.patchStatus.currentPhase.label
+      data.patchStatus.currentPhase.label,
     );
   }
   if (data.patchStatus?.nextMilestone?.startTime) {
     phaseLabelsByStart.set(
       data.patchStatus.nextMilestone.startTime,
-      data.patchStatus.nextMilestone.label
+      data.patchStatus.nextMilestone.label,
     );
   }
+
+  const activeBanners = sortByEndTime(data.banners.filter(isRunningActivity));
+  const primaryBanner = activeBanners[0] ?? null;
 
   function showUpcomingBanners() {
     setBannerTab("upcoming");
@@ -124,6 +168,23 @@ export function GameContent({ gameId }: GameContentProps) {
       document.getElementById("banners")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }
+
+  function scrollToBanners() {
+    document.getElementById("banners")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  const navSections: SectionNavItem[] = [
+    { id: "patch-status", label: "Overview" },
+    { id: "banners", label: "Banners" },
+    { id: "events", label: "Events" },
+  ];
+  if (activeChallenges.length > 0) {
+    navSections.push({ id: "challenges", label: "Challenges" });
+  }
+  navSections.push(
+    { id: "announcements", label: "Announcements" },
+    { id: "news", label: "News" },
+  );
 
   const starIcon = (
     <svg
@@ -195,13 +256,33 @@ export function GameContent({ gameId }: GameContentProps) {
 
   return (
     <div className="space-y-8">
-      <PatchStatusBanner
-        patchStatus={data.patchStatus}
-        gameId={gameId}
-        dataError={data.error}
-        officialUrl={GAMES[gameId].website}
-        onShowUpcoming={showUpcomingBanners}
-      />
+      <section id="patch-status" className="scroll-mt-36 space-y-4">
+        <GameHero
+          gameId={gameId}
+          patchStatus={data.patchStatus}
+          activeBanner={primaryBanner}
+          activeBannerCount={activeBanners.length}
+          dataError={data.error}
+          officialUrl={GAMES[gameId].website}
+          showDetails={patchDetailsOpen}
+          onToggleDetails={() => setPatchDetailsOpen((open) => !open)}
+          onShowUpcoming={showUpcomingBanners}
+          onScrollToBanners={scrollToBanners}
+        />
+
+        {patchDetailsOpen && (
+          <PatchStatusBanner
+            patchStatus={data.patchStatus}
+            gameId={gameId}
+            dataError={data.error}
+            officialUrl={GAMES[gameId].website}
+            onShowUpcoming={showUpcomingBanners}
+            compact
+          />
+        )}
+      </section>
+
+      <SectionNav sections={navSections} />
 
       {data.error && data.banners.length + data.events.length + data.news.length > 0 && (
         <div className="rounded-lg border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">
@@ -216,9 +297,10 @@ export function GameContent({ gameId }: GameContentProps) {
         tab={bannerTab}
         onTabChange={setBannerTab}
         phaseLabelsByStart={phaseLabelsByStart}
+        onShowUpcoming={showUpcomingBanners}
       />
 
-      <section>
+      <section id="events" className="scroll-mt-36">
         <SectionHeading
           icon={eventIcon}
           title="Active In-Game Events"
@@ -232,12 +314,15 @@ export function GameContent({ gameId }: GameContentProps) {
             ))}
           </div>
         ) : (
-          <EmptyState message="No active in-game events right now" />
+          <EmptyState
+            icon={eventIcon}
+            message="No active in-game events right now"
+          />
         )}
       </section>
 
       {activeChallenges.length > 0 && (
-        <section>
+        <section id="challenges" className="scroll-mt-36">
           <SectionHeading
             icon={eventIcon}
             title="Active Challenges"
@@ -256,7 +341,7 @@ export function GameContent({ gameId }: GameContentProps) {
         </section>
       )}
 
-      <section>
+      <section id="announcements" className="scroll-mt-36">
         <SectionHeading
           icon={megaphoneIcon}
           title="Announcements"
@@ -274,11 +359,14 @@ export function GameContent({ gameId }: GameContentProps) {
             ))}
           </div>
         ) : (
-          <EmptyState message="No patch or maintenance announcements available" />
+          <EmptyState
+            icon={megaphoneIcon}
+            message="No patch or maintenance announcements available"
+          />
         )}
       </section>
 
-      <section>
+      <section id="news" className="scroll-mt-36">
         <SectionHeading
           icon={newsIcon}
           title="Latest News"
@@ -286,52 +374,18 @@ export function GameContent({ gameId }: GameContentProps) {
           color={config.color}
         />
         {news.length > 0 ? (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-2">
             {news.map((item) => (
               <NewsCard key={item.id} news={item} gameId={gameId} />
             ))}
           </div>
         ) : (
-          <EmptyState message="No news available" />
+          <EmptyState icon={newsIcon} message="No news available" />
         )}
       </section>
 
-      <p className="flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-muted-foreground">
-        <span>
-          Zuletzt aktualisiert:{" "}
-          {new Date(data.lastUpdated).toLocaleString("de-DE", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </span>
-        <button
-          type="button"
-          onClick={() => void handleRefresh()}
-          disabled={isValidating}
-          className={`inline-flex items-center gap-1.5 rounded-md border border-border/60 bg-card/40 px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-card/70 disabled:opacity-50 ${config.color}`}
-        >
-          <svg
-            className={`h-3.5 w-3.5 ${isValidating ? "animate-spin" : ""}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
-          </svg>
-          {isValidating ? "Lädt…" : "Aktualisieren"}
-        </button>
-        <span className="text-muted-foreground/80">
-          Auto-Refresh alle {Math.round(DATA_REVALIDATE_SECONDS / 60)} Min.
-        </span>
+      <p className="text-center text-xs text-muted-foreground">
+        Auto-refreshes every {Math.round(DATA_REVALIDATE_SECONDS / 60)} min
       </p>
     </div>
   );

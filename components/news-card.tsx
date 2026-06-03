@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { CardMedia } from "@/components/card-media";
 import { NewsItem, GameId } from "@/lib/types";
 import { GAME_CONFIG } from "@/lib/game-config";
+import { formatDate } from "@/lib/format";
 
 interface NewsCardProps {
   news: NewsItem;
@@ -15,7 +16,7 @@ export function NewsCard({ news, gameId }: NewsCardProps) {
   const config = GAME_CONFIG[gameId];
 
   return (
-    <Card className="group border-border/50 bg-card/50 backdrop-blur-sm transition-colors hover:border-border">
+    <Card className="interactive-card group border-border/50 bg-card/40 backdrop-blur-sm">
       <a href={news.url} target="_blank" rel="noopener noreferrer" className="block">
         <CardContent className="p-0">
           <div className="flex flex-col sm:flex-row">
@@ -23,7 +24,7 @@ export function NewsCard({ news, gameId }: NewsCardProps) {
               <CardMedia src={news.thumbnail} alt={news.title} variant="news" />
             )}
 
-            <div className="min-w-0 flex-1 p-4">
+            <div className="min-w-0 flex-1 p-3 sm:p-4">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge
                   variant="outline"
@@ -32,23 +33,13 @@ export function NewsCard({ news, gameId }: NewsCardProps) {
                   {news.category}
                 </Badge>
                 <span className="text-xs text-muted-foreground">
-                  {new Date(news.date).toLocaleDateString("de-DE", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })}
+                  {formatDate(news.date)}
                 </span>
               </div>
 
-              <h3 className="mt-2 text-sm font-semibold leading-snug text-foreground transition-colors group-hover:text-primary sm:text-base">
+              <h3 className="mt-1.5 line-clamp-2 text-sm font-semibold leading-snug text-foreground transition-colors group-hover:text-primary sm:text-base">
                 {news.title}
               </h3>
-
-              {news.description && (
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {news.description}
-                </p>
-              )}
             </div>
           </div>
         </CardContent>

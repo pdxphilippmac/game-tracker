@@ -1,9 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { Countdown } from "@/components/countdown";
 import type { PatchMilestone, PatchStatus } from "@/lib/patch-types";
 import type { GameId } from "@/lib/types";
 import { GAME_CONFIG } from "@/lib/game-config";
+import { formatDateTime } from "@/lib/format";
+import { cn } from "@/lib/utils";
 
 type PatchStatusBannerProps = {
   patchStatus: PatchStatus | null;
@@ -11,19 +14,12 @@ type PatchStatusBannerProps = {
   dataError?: string;
   officialUrl?: string;
   onShowUpcoming?: () => void;
-};
-
-const DATE_TIME_FORMAT: Intl.DateTimeFormatOptions = {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
+  compact?: boolean;
 };
 
 function formatTime(timestamp?: number): string {
   if (!timestamp) return "Unknown";
-  return new Date(timestamp).toLocaleString("de-DE", DATE_TIME_FORMAT);
+  return formatDateTime(timestamp);
 }
 
 function MilestoneBlock({
@@ -65,7 +61,7 @@ function MilestoneBlock({
           onClick={onPreview}
           className={`mt-3 text-xs font-medium ${accentClass} hover:underline`}
         >
-          Kommende Banner anzeigen →
+          View upcoming banners →
         </button>
       )}
     </div>
@@ -78,6 +74,7 @@ export function PatchStatusBanner({
   dataError,
   officialUrl,
   onShowUpcoming,
+  compact = false,
 }: PatchStatusBannerProps) {
   const config = GAME_CONFIG[gameId];
 
@@ -108,30 +105,39 @@ export function PatchStatusBanner({
     : patchStatus.currentVersion;
 
   return (
-    <div className={`rounded-xl border bg-card/50 p-4 sm:p-5 ${config.bgColor}`}>
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Current Version
-          </p>
-          <h2 className={`mt-1 text-lg font-semibold sm:text-xl ${config.color}`}>
-            {versionLabel}
-          </h2>
-        </div>
-        {patchStatus.patchEndTime && (
-          <div className="rounded-lg border border-border/50 bg-background/50 px-3 py-2 text-right">
-            <p className="text-xs text-muted-foreground">Patch ends</p>
-            <p className="text-sm font-medium text-foreground">
-              {formatTime(patchStatus.patchEndTime)}
+    <div
+      className={cn(
+        "rounded-xl border bg-card/50 p-4 sm:p-5",
+        config.bgColor,
+        !compact &&
+          "shadow-[0_0_40px_color-mix(in_oklch,var(--game-accent)_12%,transparent)] ring-1 ring-[color-mix(in_oklch,var(--game-accent)_30%,var(--border))] sm:p-6",
+      )}
+    >
+      {!compact && (
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Current Version
             </p>
-            <p className={`mt-1 text-sm ${config.color}`}>
-              <Countdown endDate={new Date(patchStatus.patchEndTime).toISOString()} />
-            </p>
+            <h2 className={`mt-1 text-xl font-semibold sm:text-2xl ${config.color}`}>
+              {versionLabel}
+            </h2>
           </div>
-        )}
-      </div>
+          {patchStatus.patchEndTime && (
+            <div className="rounded-lg border border-border/50 bg-background/50 px-3 py-2 text-right">
+              <p className="text-xs text-muted-foreground">Patch ends</p>
+              <p className="text-sm font-medium text-foreground">
+                {formatTime(patchStatus.patchEndTime)}
+              </p>
+              <p className={`mt-1 text-sm ${config.color}`}>
+                <Countdown endDate={new Date(patchStatus.patchEndTime).toISOString()} />
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
+      <div className={cn("grid gap-3 md:grid-cols-3", !compact && "mt-4")}>
         <div className="rounded-lg border border-border/50 bg-background/40 p-3">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
             Patch Window

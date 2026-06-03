@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ActivityTimeBar } from "@/components/activity-time-bar";
@@ -16,7 +17,7 @@ export function EventCard({ event, gameId }: EventCardProps) {
   const config = GAME_CONFIG[gameId];
 
   return (
-    <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+    <Card className="interactive-card border-border/50 bg-card/50 backdrop-blur-sm">
       <CardContent className="p-0">
         <div className="flex flex-col md:flex-row">
           {event.imageUrl && (
@@ -54,10 +55,13 @@ export function EventCard({ event, gameId }: EventCardProps) {
                       className="flex items-start gap-2 rounded-lg border border-border/40 bg-background/40 p-2.5"
                     >
                       {reward.icon && (
-                        <img
+                        <Image
                           src={reward.icon}
                           alt=""
+                          width={32}
+                          height={32}
                           className="mt-0.5 h-8 w-8 shrink-0 rounded-sm object-cover"
+                          unoptimized
                         />
                       )}
                       <div className="min-w-0">

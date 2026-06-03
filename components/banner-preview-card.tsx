@@ -1,23 +1,17 @@
 "use client";
 
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Countdown } from "@/components/countdown";
 import { RarityStars } from "@/components/rarity-stars";
 import { Banner, GameId } from "@/lib/types";
 import { GAME_CONFIG } from "@/lib/game-config";
+import { formatDateTime } from "@/lib/format";
 
 type BannerPreviewCardProps = {
   banner: Banner;
   gameId: GameId;
   phaseLabel?: string;
-};
-
-const DATE_FORMAT: Intl.DateTimeFormatOptions = {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
 };
 
 export function BannerPreviewCard({
@@ -31,7 +25,7 @@ export function BannerPreviewCard({
   const featured = [...featuredCharacters, ...featuredWeapons];
 
   return (
-    <div className="rounded-xl border border-dashed border-border/60 bg-card/40 p-4">
+    <div className="interactive-card rounded-xl border border-dashed border-border/60 bg-card/40 p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -52,7 +46,7 @@ export function BannerPreviewCard({
           </h3>
         </div>
         <div className="text-right text-xs text-muted-foreground">
-          <p>Start: {new Date(banner.startTime).toLocaleString("de-DE", DATE_FORMAT)}</p>
+          <p>Start: {formatDateTime(banner.startTime)}</p>
           <p className={`mt-1 text-sm ${config.color}`}>
             <Countdown endDate={new Date(banner.startTime).toISOString()} />
           </p>
@@ -67,10 +61,13 @@ export function BannerPreviewCard({
               className="flex items-center gap-2 rounded-lg border border-border/50 bg-background/50 px-2.5 py-1.5"
             >
               {"icon" in item && item.icon ? (
-                <img
+                <Image
                   src={item.icon}
                   alt={item.name}
+                  width={36}
+                  height={36}
                   className="h-9 w-9 shrink-0 rounded-md object-cover"
+                  unoptimized
                 />
               ) : (
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-muted text-xs text-muted-foreground">

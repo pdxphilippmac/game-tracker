@@ -1,11 +1,19 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 import { ServiceWorkerRegister } from "@/components/service-worker-register";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const geistSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 
 const APP_NAME = "Gacha Tracker";
 const APP_DEFAULT_TITLE = "Gacha Tracker - Banner & News Dashboard";
@@ -47,8 +55,8 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en" className="bg-background">
-      <body className={`${inter.className} antialiased`}>
+    <html lang="en" className={`bg-background ${geistSans.variable} ${geistMono.variable}`}>
+      <body className="font-sans antialiased">
         {children}
         <ServiceWorkerRegister />
         {process.env.NODE_ENV === "production" && <Analytics />}

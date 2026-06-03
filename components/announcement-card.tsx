@@ -7,6 +7,7 @@ import { CardMedia } from "@/components/card-media";
 import { NewsItem, GameId, type AnnouncementKind } from "@/lib/types";
 import { GAME_CONFIG } from "@/lib/game-config";
 import { ANNOUNCEMENT_LABELS } from "@/lib/news-classify";
+import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 interface AnnouncementCardProps {
@@ -22,6 +23,14 @@ const KIND_STYLES: Record<AnnouncementKind, string> = {
   general: "border-border/50 bg-card/30 text-muted-foreground",
 };
 
+const KIND_BORDER: Record<AnnouncementKind, string> = {
+  patch: "border-l-violet-400",
+  maintenance: "border-l-red-400",
+  special_program: "border-l-cyan-400",
+  banner_info: "border-l-amber-400",
+  general: "border-l-border",
+};
+
 export function AnnouncementCard({ announcement, gameId }: AnnouncementCardProps) {
   const [expanded, setExpanded] = useState(false);
   const config = GAME_CONFIG[gameId];
@@ -34,12 +43,21 @@ export function AnnouncementCard({ announcement, gameId }: AnnouncementCardProps
   };
 
   return (
-    <Card className="border-border/50 bg-card/50 backdrop-blur-sm transition-colors hover:border-border">
+    <Card
+      className={cn(
+        "interactive-card border-border/50 border-l-4 bg-card/50 backdrop-blur-sm",
+        KIND_BORDER[kind],
+      )}
+    >
       <CardContent className="p-0">
         <div className="flex flex-col md:flex-row">
           {announcement.thumbnail && (
             <a {...externalLinkProps} className="block shrink-0">
-              <CardMedia src={announcement.thumbnail} alt="" variant="announcement" />
+              <CardMedia
+                src={announcement.thumbnail}
+                alt={announcement.title}
+                variant="announcement"
+              />
             </a>
           )}
 
@@ -55,11 +73,7 @@ export function AnnouncementCard({ announcement, gameId }: AnnouncementCardProps
                 {announcement.category}
               </Badge>
               <span className="text-xs text-muted-foreground">
-                {new Date(announcement.date).toLocaleDateString("de-DE", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}
+                {formatDate(announcement.date)}
               </span>
             </div>
 
@@ -88,7 +102,7 @@ export function AnnouncementCard({ announcement, gameId }: AnnouncementCardProps
                   aria-expanded={expanded}
                   onClick={() => setExpanded((prev) => !prev)}
                 >
-                  {expanded ? "Weniger anzeigen" : "Mehr anzeigen"}
+                  {expanded ? "Show less" : "Show more"}
                 </button>
               </>
             )}

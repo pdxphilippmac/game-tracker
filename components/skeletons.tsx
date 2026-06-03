@@ -1,6 +1,20 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 
+function GameHeroSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-border/50 bg-card/50 p-4 sm:p-5 lg:p-6">
+      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-5 lg:gap-5">
+        <div className="order-1 space-y-3 lg:order-2 lg:col-span-2">
+          <Skeleton className="h-32 w-full rounded-xl" />
+          <Skeleton className="h-20 w-full rounded-xl" />
+        </div>
+        <Skeleton className="order-2 aspect-[16/9] w-full rounded-xl lg:order-1 lg:col-span-3 lg:aspect-[21/9] lg:min-h-[12rem]" />
+      </div>
+    </div>
+  );
+}
+
 function ListItemSkeleton() {
   return (
     <Card className="border-border/50 bg-card/50">
@@ -26,11 +40,10 @@ function NewsRowSkeleton() {
     <Card className="border-border/50 bg-card/50">
       <CardContent className="p-0">
         <div className="flex flex-col sm:flex-row">
-          <Skeleton className="h-36 w-full sm:h-auto sm:w-40 sm:min-h-[120px] sm:shrink-0" />
-          <div className="flex-1 space-y-2 p-4">
+          <Skeleton className="h-24 w-full sm:h-auto sm:w-40 sm:min-h-[96px] sm:shrink-0" />
+          <div className="flex-1 space-y-2 p-3 sm:p-4">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-5 w-full" />
-            <Skeleton className="h-4 w-4/5" />
           </div>
         </div>
       </CardContent>
@@ -41,6 +54,8 @@ function NewsRowSkeleton() {
 export function GameContentSkeleton() {
   return (
     <div className="space-y-8">
+      <GameHeroSkeleton />
+      <Skeleton className="h-10 w-full rounded-xl" />
       <section>
         <Skeleton className="mb-4 h-7 w-40" />
         <div className="flex flex-col gap-4">
@@ -59,7 +74,7 @@ export function GameContentSkeleton() {
       </section>
       <section>
         <Skeleton className="mb-4 h-7 w-36" />
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           {Array.from({ length: 4 }).map((_, index) => (
             <NewsRowSkeleton key={`news-${index}`} />
           ))}

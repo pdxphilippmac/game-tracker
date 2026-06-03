@@ -202,7 +202,7 @@ function mapNoticeItem(item: EnneadNewsItem): NewsItem {
   if (range && mapped.kind === "banner_info") {
     mapped.description = [
       mapped.description,
-      `Period: ${new Date(range.startTime).toLocaleString("de-DE")} – ${new Date(range.endTime).toLocaleString("de-DE")}`,
+      `Period: ${new Date(range.startTime).toLocaleString("en-US")} – ${new Date(range.endTime).toLocaleString("en-US")}`,
     ]
       .filter(Boolean)
       .join("\n");

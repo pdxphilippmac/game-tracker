@@ -6,6 +6,7 @@ import { GAME_CONFIG } from "@/lib/game-config";
 import { isRunningActivity, isUpcomingActivity, sortByEndTime, sortByStartTime } from "@/lib/activity-utils";
 import { BannerCard } from "@/components/banner-card";
 import { BannerPreviewCard } from "@/components/banner-preview-card";
+import { EmptyState } from "@/components/empty-state";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type BannerSectionProps = {
@@ -15,15 +16,8 @@ type BannerSectionProps = {
   tab: string;
   onTabChange: (tab: string) => void;
   phaseLabelsByStart?: Map<number, string>;
+  onShowUpcoming?: () => void;
 };
-
-function EmptyState({ message }: { message: string }) {
-  return (
-    <div className="rounded-lg border border-dashed border-border/50 bg-card/30 p-8 text-center">
-      <p className="text-muted-foreground">{message}</p>
-    </div>
-  );
-}
 
 export function BannerSection({
   banners,
@@ -32,13 +26,14 @@ export function BannerSection({
   tab,
   onTabChange,
   phaseLabelsByStart,
+  onShowUpcoming,
 }: BannerSectionProps) {
   const config = GAME_CONFIG[gameId];
   const runningBanners = sortByEndTime(banners.filter(isRunningActivity));
   const upcomingBanners = sortByStartTime(banners.filter(isUpcomingActivity));
 
   return (
-    <section id="banners">
+    <section id="banners" className="scroll-mt-36">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-xl font-semibold text-foreground">
           <span className={config.color}>{icon}</span>
@@ -49,7 +44,7 @@ export function BannerSection({
       <Tabs value={tab} onValueChange={onTabChange}>
         <TabsList>
           <TabsTrigger value="active">
-            Aktiv
+            Active
             {runningBanners.length > 0 && (
               <span className="ml-1 text-xs text-muted-foreground">
                 ({runningBanners.length})
@@ -66,19 +61,40 @@ export function BannerSection({
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="active" className="mt-4">
+        <TabsContent value="active" className="mt-4 animate-in fade-in duration-200 motion-reduce:animate-none">
           {runningBanners.length > 0 ? (
             <div className="flex flex-col gap-4">
-              {runningBanners.map((banner) => (
-                <BannerCard key={String(banner.id)} banner={banner} gameId={gameId} />
+              {runningBanners.map((banner, index) => (
+                <BannerCard
+                  key={String(banner.id)}
+                  banner={banner}
+                  gameId={gameId}
+                  featured={runningBanners.length === 1}
+                  priority={index === 0}
+                />
               ))}
             </div>
           ) : (
-            <EmptyState message="Gerade läuft kein Banner" />
+            <EmptyState
+              icon={icon}
+              message="No banners are running right now"
+              action={
+                upcomingBanners.length > 0 && onShowUpcoming ? (
+                  <button
+                    type="button"
+                    onClick={onShowUpcoming}
+                    className={`text-sm font-medium ${config.color} hover:underline`}
+                  >
+                    View {upcomingBanners.length} upcoming banner
+                    {upcomingBanners.length === 1 ? "" : "s"} →
+                  </button>
+                ) : undefined
+              }
+            />
           )}
         </TabsContent>
 
-        <TabsContent value="upcoming" className="mt-4">
+        <TabsContent value="upcoming" className="mt-4 animate-in fade-in duration-200 motion-reduce:animate-none">
           {upcomingBanners.length > 0 ? (
             <div className="flex flex-col gap-3">
               {upcomingBanners.map((banner) => (
@@ -91,7 +107,7 @@ export function BannerSection({
               ))}
             </div>
           ) : (
-            <EmptyState message="Keine kommenden Banner in den Daten" />
+            <EmptyState message="No upcoming banners in the data" />
           )}
         </TabsContent>
       </Tabs>

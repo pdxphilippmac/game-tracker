@@ -15,7 +15,7 @@ export function ChallengeCard({ challenge, gameId }: ChallengeCardProps) {
   const config = GAME_CONFIG[gameId];
 
   return (
-    <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+    <Card className="interactive-card border-border/50 bg-card/50 backdrop-blur-sm">
       <CardContent className="p-4 sm:p-5">
         <div className="flex flex-wrap items-start gap-2">
           <h3 className="text-base font-semibold leading-snug text-foreground sm:text-lg">

@@ -161,7 +161,7 @@ function mapNewsWithKind(item: EnneadNewsItem, prefix: string): NewsItem {
   if (mapped.kind === "patch" && patchDate) {
     mapped.description = [
       mapped.description,
-      `Update start: ${new Date(patchDate).toLocaleString("de-DE", { timeZone: "Asia/Shanghai" })} (UTC+8)`,
+      `Update start: ${new Date(patchDate).toLocaleString("en-US", { timeZone: "Asia/Shanghai" })} (UTC+8)`,
     ]
       .filter(Boolean)
       .join("\n");
@@ -172,7 +172,7 @@ function mapNewsWithKind(item: EnneadNewsItem, prefix: string): NewsItem {
     if (airDate) {
       mapped.description = [
         mapped.description,
-        `Air time: ${new Date(airDate).toLocaleString("de-DE", { timeZone: "Asia/Shanghai" })} (UTC+8)`,
+        `Air time: ${new Date(airDate).toLocaleString("en-US", { timeZone: "Asia/Shanghai" })} (UTC+8)`,
       ]
         .filter(Boolean)
         .join("\n");
