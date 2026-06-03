@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { Banner, GameId } from "@/lib/types";
-import { GAME_CONFIG } from "@/lib/game-config";
+import { gameAccentText, gameBadge } from "@/lib/game-config";
 import { isRunningActivity, isUpcomingActivity, sortByEndTime, sortByStartTime } from "@/lib/activity-utils";
 import { BannerCard } from "@/components/banner-card";
 import { BannerPreviewCard } from "@/components/banner-preview-card";
@@ -28,7 +28,6 @@ export function BannerSection({
   phaseLabelsByStart,
   onShowUpcoming,
 }: BannerSectionProps) {
-  const config = GAME_CONFIG[gameId];
   const runningBanners = sortByEndTime(banners.filter(isRunningActivity));
   const upcomingBanners = sortByStartTime(banners.filter(isUpcomingActivity));
 
@@ -36,7 +35,7 @@ export function BannerSection({
     <section id="banners" className="scroll-mt-36">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-xl font-semibold text-foreground">
-          <span className={config.color}>{icon}</span>
+          <span className={gameAccentText}>{icon}</span>
           Banners
         </h2>
       </div>
@@ -54,7 +53,7 @@ export function BannerSection({
           <TabsTrigger value="upcoming">
             Upcoming
             {upcomingBanners.length > 0 && (
-              <span className={`ml-1 text-xs ${config.color}`}>
+              <span className={`ml-1 text-xs ${gameAccentText}`}>
                 ({upcomingBanners.length})
               </span>
             )}
@@ -83,7 +82,7 @@ export function BannerSection({
                   <button
                     type="button"
                     onClick={onShowUpcoming}
-                    className={`text-sm font-medium ${config.color} hover:underline`}
+                    className={`text-sm font-medium ${gameAccentText} hover:underline`}
                   >
                     View {upcomingBanners.length} upcoming banner
                     {upcomingBanners.length === 1 ? "" : "s"} →

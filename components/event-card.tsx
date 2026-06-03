@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ActivityTimeBar } from "@/components/activity-time-bar";
 import { CardMedia } from "@/components/card-media";
 import { GameEvent, GameId } from "@/lib/types";
-import { GAME_CONFIG } from "@/lib/game-config";
+import { gameAccentText, gameBadge } from "@/lib/game-config";
 
 interface EventCardProps {
   event: GameEvent;
@@ -14,8 +14,6 @@ interface EventCardProps {
 }
 
 export function EventCard({ event, gameId }: EventCardProps) {
-  const config = GAME_CONFIG[gameId];
-
   return (
     <Card className="interactive-card border-border/50 bg-card/50 backdrop-blur-sm">
       <CardContent className="p-0">
@@ -31,7 +29,7 @@ export function EventCard({ event, gameId }: EventCardProps) {
               </h3>
               <Badge
                 variant="outline"
-                className={`border ${config.bgColor} ${config.color}`}
+                className={gameBadge}
               >
                 {event.type}
               </Badge>
@@ -79,7 +77,7 @@ export function EventCard({ event, gameId }: EventCardProps) {
             <ActivityTimeBar
               startTime={event.startTime}
               endTime={event.endTime}
-              accentClass={config.color}
+              accentClass={gameAccentText}
             />
           </div>
         </div>

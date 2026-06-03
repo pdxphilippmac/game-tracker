@@ -4,9 +4,6 @@ export interface GameInfo {
   id: GameId;
   name: string;
   shortName: string;
-  color: string;
-  bgColor: string;
-  icon: string;
   website: string;
 }
 
@@ -15,45 +12,30 @@ export const GAMES: Record<GameId, GameInfo> = {
     id: "hsr",
     name: "Honkai: Star Rail",
     shortName: "HSR",
-    color: "text-amber-400",
-    bgColor: "bg-amber-400/10",
-    icon: "/games/hsr.png",
     website: "https://hsr.hoyoverse.com",
   },
   zzz: {
     id: "zzz",
     name: "Zenless Zone Zero",
     shortName: "ZZZ",
-    color: "text-cyan-400",
-    bgColor: "bg-cyan-400/10",
-    icon: "/games/zzz.png",
     website: "https://zenless.hoyoverse.com",
   },
   wuwa: {
     id: "wuwa",
     name: "Wuthering Waves",
     shortName: "WuWa",
-    color: "text-blue-400",
-    bgColor: "bg-blue-400/10",
-    icon: "/games/wuwa.png",
     website: "https://wutheringwaves.kurogames.com",
   },
   endfield: {
     id: "endfield",
     name: "Arknights: Endfield",
     shortName: "Endfield",
-    color: "text-orange-400",
-    bgColor: "bg-orange-400/10",
-    icon: "/games/endfield.png",
     website: "https://endfield.gryphline.com",
   },
   n2e: {
     id: "n2e",
     name: "Neverness to Everness",
     shortName: "N2E",
-    color: "text-pink-400",
-    bgColor: "bg-pink-400/10",
-    icon: "/games/n2e.png",
     website: "https://n2e.papegames.com",
   },
 };

@@ -7,7 +7,7 @@ import { ActivityTimeBar } from "@/components/activity-time-bar";
 import { CardMedia } from "@/components/card-media";
 import { RarityStars } from "@/components/rarity-stars";
 import { Banner, BannerCharacter, BannerWeapon, GameId } from "@/lib/types";
-import { GAME_CONFIG } from "@/lib/game-config";
+import { gameAccentText, gameBadge } from "@/lib/game-config";
 import { cn } from "@/lib/utils";
 
 interface BannerCardProps {
@@ -73,7 +73,6 @@ function WeaponTile({ weapon }: { weapon: BannerWeapon }) {
 }
 
 export function BannerCard({ banner, gameId, featured = false, priority = false }: BannerCardProps) {
-  const config = GAME_CONFIG[gameId];
   const featuredCharacters = banner.characters.filter((char) => char.rarity >= 5);
   const rateUpCharacters = banner.characters.filter((char) => char.rarity < 5);
   const featuredWeapons = banner.weapons.filter((weapon) => weapon.rarity >= 5);
@@ -108,7 +107,7 @@ export function BannerCard({ banner, gameId, featured = false, priority = false 
               )}
               <Badge
                 variant="outline"
-                className={`border ${config.bgColor} ${config.color}`}
+                className={gameBadge}
               >
                 {banner.type}
               </Badge>
@@ -152,7 +151,7 @@ export function BannerCard({ banner, gameId, featured = false, priority = false 
             <ActivityTimeBar
               startTime={banner.startTime}
               endTime={banner.endTime}
-              accentClass={config.color}
+              accentClass={gameAccentText}
             />
           </div>
         </div>

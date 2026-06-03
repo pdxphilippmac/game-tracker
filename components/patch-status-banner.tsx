@@ -4,7 +4,7 @@ import Image from "next/image";
 import { Countdown } from "@/components/countdown";
 import type { PatchMilestone, PatchStatus } from "@/lib/patch-types";
 import type { GameId } from "@/lib/types";
-import { GAME_CONFIG } from "@/lib/game-config";
+import { gameAccentText, gamePanel } from "@/lib/game-config";
 import { formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -76,8 +76,6 @@ export function PatchStatusBanner({
   onShowUpcoming,
   compact = false,
 }: PatchStatusBannerProps) {
-  const config = GAME_CONFIG[gameId];
-
   if (!patchStatus) {
     return (
       <div className="rounded-xl border border-dashed border-border/60 bg-card/40 p-4 sm:p-5">
@@ -107,10 +105,9 @@ export function PatchStatusBanner({
   return (
     <div
       className={cn(
-        "rounded-xl border bg-card/50 p-4 sm:p-5",
-        config.bgColor,
-        !compact &&
-          "shadow-[0_0_40px_color-mix(in_oklch,var(--game-accent)_12%,transparent)] ring-1 ring-[color-mix(in_oklch,var(--game-accent)_30%,var(--border))] sm:p-6",
+        "rounded-xl border p-4 sm:p-5",
+        gamePanel,
+        !compact && "sm:p-6",
       )}
     >
       {!compact && (
@@ -119,7 +116,7 @@ export function PatchStatusBanner({
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Current Version
             </p>
-            <h2 className={`mt-1 text-xl font-semibold sm:text-2xl ${config.color}`}>
+            <h2 className={`mt-1 text-xl font-semibold sm:text-2xl ${gameAccentText}`}>
               {versionLabel}
             </h2>
           </div>
@@ -129,7 +126,7 @@ export function PatchStatusBanner({
               <p className="text-sm font-medium text-foreground">
                 {formatTime(patchStatus.patchEndTime)}
               </p>
-              <p className={`mt-1 text-sm ${config.color}`}>
+              <p className={`mt-1 text-sm ${gameAccentText}`}>
                 <Countdown endDate={new Date(patchStatus.patchEndTime).toISOString()} />
               </p>
             </div>
@@ -158,7 +155,7 @@ export function PatchStatusBanner({
           <MilestoneBlock
             title="Current Phase / Banner"
             milestone={patchStatus.currentPhase}
-            accentClass={config.color}
+            accentClass={gameAccentText}
           />
         )}
 
@@ -166,7 +163,7 @@ export function PatchStatusBanner({
           <MilestoneBlock
             title="Next Phase"
             milestone={patchStatus.nextMilestone}
-            accentClass={config.color}
+            accentClass={gameAccentText}
             onPreview={onShowUpcoming}
           />
         ) : patchStatus.nextVersion ? (
@@ -191,7 +188,7 @@ export function PatchStatusBanner({
               </p>
             )}
             {patchStatus.nextVersion.startTime && (
-              <p className={`mt-1 text-sm ${config.color}`}>
+              <p className={`mt-1 text-sm ${gameAccentText}`}>
                 <Countdown
                   endDate={new Date(patchStatus.nextVersion.startTime).toISOString()}
                 />

@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CardMedia } from "@/components/card-media";
 import { NewsItem, GameId } from "@/lib/types";
-import { GAME_CONFIG } from "@/lib/game-config";
+import { gameBadge } from "@/lib/game-config";
 import { formatDate } from "@/lib/format";
 
 interface NewsCardProps {
@@ -13,8 +13,6 @@ interface NewsCardProps {
 }
 
 export function NewsCard({ news, gameId }: NewsCardProps) {
-  const config = GAME_CONFIG[gameId];
-
   return (
     <Card className="interactive-card group border-border/50 bg-card/40 backdrop-blur-sm">
       <a href={news.url} target="_blank" rel="noopener noreferrer" className="block">
@@ -28,7 +26,7 @@ export function NewsCard({ news, gameId }: NewsCardProps) {
               <div className="flex flex-wrap items-center gap-2">
                 <Badge
                   variant="outline"
-                  className={`border ${config.bgColor} ${config.color} text-xs`}
+                  className={`${gameBadge} text-xs`}
                 >
                   {news.category}
                 </Badge>

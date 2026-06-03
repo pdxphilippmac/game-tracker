@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GameContent } from "@/components/game-content";
 import { GameIcon } from "@/components/game-icon";
-import { GAME_CONFIG, GAME_IDS } from "@/lib/game-config";
+import { GAME_CONFIG, GAME_IDS, gameAccentText, gameIconBox, gameTabActive, gameTabInactive } from "@/lib/game-config";
 import type { GameHeaderMeta } from "@/lib/game-header-meta";
 import { formatDateTime } from "@/lib/format";
 import { GameId } from "@/lib/types";
@@ -30,7 +30,7 @@ export function Dashboard() {
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <div
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${activeConfig.bgColor} ${activeConfig.color} transition-colors duration-500 motion-reduce:transition-none`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${gameIconBox} transition-colors duration-500 motion-reduce:transition-none`}
               >
                 <GameIcon gameId={activeGame} className="h-5 w-5" />
               </div>
@@ -39,7 +39,7 @@ export function Dashboard() {
                   Gacha Tracker
                 </h1>
                 <p
-                  className={`truncate text-xs transition-colors duration-500 motion-reduce:transition-none sm:text-sm ${activeConfig.color}`}
+                  className={`truncate text-xs transition-colors duration-500 motion-reduce:transition-none sm:text-sm ${gameAccentText}`}
                 >
                   {showHeaderActions && headerMeta?.summary
                     ? headerMeta.summary
@@ -55,7 +55,7 @@ export function Dashboard() {
                   onClick={() => void headerMeta.onRefresh()}
                   disabled={headerMeta.isValidating}
                   aria-label="Refresh game data"
-                  className={`inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-card/40 px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-card/70 disabled:opacity-50 ${activeConfig.color}`}
+                  className={`inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-card/40 px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-card/70 disabled:opacity-50 ${gameAccentText}`}
                 >
                   <svg
                     className={`h-3.5 w-3.5 ${headerMeta.isValidating ? "animate-spin motion-reduce:animate-none" : ""}`}
@@ -95,7 +95,6 @@ export function Dashboard() {
                 className="inline-flex !h-auto w-max flex-nowrap snap-x snap-mandatory items-center gap-2.5 rounded-none bg-transparent p-0 sm:flex sm:w-full sm:flex-wrap sm:justify-start sm:gap-2"
               >
                 {GAME_IDS.map((gameId) => {
-                  const config = GAME_CONFIG[gameId];
                   const isActive = activeGame === gameId;
                   return (
                     <TabsTrigger
@@ -105,7 +104,7 @@ export function Dashboard() {
                         !h-auto !flex-none min-h-[3.25rem] shrink-0 snap-start rounded-2xl border px-3.5 py-2.5
                         transition-all duration-300 motion-reduce:transition-none after:hidden
                         sm:min-h-[2.75rem] sm:rounded-xl sm:px-4 sm:py-2.5
-                        ${isActive ? config.tabActive : config.tabInactive}
+                        ${isActive ? gameTabActive : gameTabInactive}
                       `}
                     >
                       <span className="flex items-center gap-2">
@@ -113,7 +112,7 @@ export function Dashboard() {
                         <GameIcon gameId={gameId} className="h-5 w-5 sm:h-[1.35rem] sm:w-[1.35rem]" />
                       </span>
                         <span className="text-xs font-semibold leading-snug sm:text-sm">
-                          {config.shortName}
+                          {GAME_CONFIG[gameId].shortName}
                         </span>
                       </span>
                     </TabsTrigger>

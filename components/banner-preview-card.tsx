@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Countdown } from "@/components/countdown";
 import { RarityStars } from "@/components/rarity-stars";
 import { Banner, GameId } from "@/lib/types";
-import { GAME_CONFIG } from "@/lib/game-config";
+import { gameAccentText, gameBadge } from "@/lib/game-config";
 import { formatDateTime } from "@/lib/format";
 
 type BannerPreviewCardProps = {
@@ -19,7 +19,6 @@ export function BannerPreviewCard({
   gameId,
   phaseLabel,
 }: BannerPreviewCardProps) {
-  const config = GAME_CONFIG[gameId];
   const featuredCharacters = banner.characters.filter((char) => char.rarity >= 5);
   const featuredWeapons = banner.weapons.filter((weapon) => weapon.rarity >= 5);
   const featured = [...featuredCharacters, ...featuredWeapons];
@@ -30,7 +29,7 @@ export function BannerPreviewCard({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             {phaseLabel && (
-              <Badge variant="outline" className={`border ${config.bgColor} ${config.color}`}>
+              <Badge variant="outline" className={gameBadge}>
                 {phaseLabel}
               </Badge>
             )}
@@ -47,7 +46,7 @@ export function BannerPreviewCard({
         </div>
         <div className="text-right text-xs text-muted-foreground">
           <p>Start: {formatDateTime(banner.startTime)}</p>
-          <p className={`mt-1 text-sm ${config.color}`}>
+          <p className={`mt-1 text-sm ${gameAccentText}`}>
             <Countdown endDate={new Date(banner.startTime).toISOString()} />
           </p>
         </div>

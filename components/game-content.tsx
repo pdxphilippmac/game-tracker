@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import useSWR from "swr";
 import { GameId, GameData, GAMES } from "@/lib/types";
 import { GAME_CONFIG } from "@/lib/game-config";
+import { gameAccentText } from "@/lib/game-config";
 import { isRunningActivity, sortByEndTime } from "@/lib/activity-utils";
 import { fetchGameData } from "@/lib/game-data-fetcher";
 import { DATA_REVALIDATE_SECONDS } from "@/lib/fetch-config";
@@ -29,16 +30,14 @@ function SectionHeading({
   icon,
   title,
   count,
-  color,
 }: {
   icon: ReactNode;
   title: string;
   count?: number;
-  color: string;
 }) {
   return (
     <h2 className="mb-4 flex items-center gap-2 text-xl font-semibold text-foreground">
-      <span className={color}>{icon}</span>
+      <span className={gameAccentText}>{icon}</span>
       {title}
       {count !== undefined && count > 0 && (
         <span className="text-sm font-normal text-muted-foreground">({count})</span>
@@ -119,7 +118,7 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
   if (error || !data) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className={`mb-4 ${config.color}`}>
+        <div className={`mb-4 ${gameAccentText}`}>
           <GameIcon gameId={gameId} className="mx-auto h-10 w-10" />
         </div>
         <h3 className="mb-2 text-lg font-medium text-foreground">
@@ -261,7 +260,6 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
     <div className="space-y-8">
       <section id="patch-status" className="scroll-mt-36 space-y-4">
         <GameHero
-          gameId={gameId}
           patchStatus={data.patchStatus}
           activeBanner={primaryBanner}
           activeBannerCount={activeBanners.length}
@@ -308,7 +306,6 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
           icon={eventIcon}
           title="Active In-Game Events"
           count={activeEvents.length}
-          color={config.color}
         />
         {activeEvents.length > 0 ? (
           <div className="flex flex-col gap-4">
@@ -330,7 +327,6 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
             icon={eventIcon}
             title="Active Challenges"
             count={activeChallenges.length}
-            color={config.color}
           />
           <div className="flex flex-col gap-4">
             {activeChallenges.map((challenge) => (
@@ -349,7 +345,6 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
           icon={megaphoneIcon}
           title="Announcements"
           count={announcements.length}
-          color={config.color}
         />
         {announcements.length > 0 ? (
           <div className="flex flex-col gap-4">
@@ -374,7 +369,6 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
           icon={newsIcon}
           title="Latest News"
           count={news.length}
-          color={config.color}
         />
         {news.length > 0 ? (
           <div className="flex flex-col gap-2">

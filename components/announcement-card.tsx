@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CardMedia } from "@/components/card-media";
 import { NewsItem, GameId, type AnnouncementKind } from "@/lib/types";
-import { GAME_CONFIG } from "@/lib/game-config";
+import { gameBadge } from "@/lib/game-config";
 import { ANNOUNCEMENT_LABELS } from "@/lib/news-classify";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -33,7 +33,6 @@ const KIND_BORDER: Record<AnnouncementKind, string> = {
 
 export function AnnouncementCard({ announcement, gameId }: AnnouncementCardProps) {
   const [expanded, setExpanded] = useState(false);
-  const config = GAME_CONFIG[gameId];
   const kind = announcement.kind ?? "general";
 
   const externalLinkProps = {
@@ -68,7 +67,7 @@ export function AnnouncementCard({ announcement, gameId }: AnnouncementCardProps
               </Badge>
               <Badge
                 variant="outline"
-                className={`border ${config.bgColor} ${config.color}`}
+                className={`${gameBadge}`}
               >
                 {announcement.category}
               </Badge>

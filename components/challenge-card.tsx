@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ActivityTimeBar } from "@/components/activity-time-bar";
 import { Challenge, GameId } from "@/lib/types";
-import { GAME_CONFIG } from "@/lib/game-config";
+import { gameAccentText, gameBadge } from "@/lib/game-config";
 
 interface ChallengeCardProps {
   challenge: Challenge;
@@ -12,8 +12,6 @@ interface ChallengeCardProps {
 }
 
 export function ChallengeCard({ challenge, gameId }: ChallengeCardProps) {
-  const config = GAME_CONFIG[gameId];
-
   return (
     <Card className="interactive-card border-border/50 bg-card/50 backdrop-blur-sm">
       <CardContent className="p-4 sm:p-5">
@@ -23,7 +21,7 @@ export function ChallengeCard({ challenge, gameId }: ChallengeCardProps) {
           </h3>
           <Badge
             variant="outline"
-            className={`border ${config.bgColor} ${config.color}`}
+            className={gameBadge}
           >
             {challenge.type}
           </Badge>
@@ -32,7 +30,7 @@ export function ChallengeCard({ challenge, gameId }: ChallengeCardProps) {
         <ActivityTimeBar
           startTime={challenge.startTime}
           endTime={challenge.endTime}
-          accentClass={config.color}
+          accentClass={gameAccentText}
         />
       </CardContent>
     </Card>

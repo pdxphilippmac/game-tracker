@@ -6,12 +6,11 @@ import { Countdown } from "@/components/countdown";
 import { Badge } from "@/components/ui/badge";
 import { RarityStars } from "@/components/rarity-stars";
 import type { PatchStatus } from "@/lib/patch-types";
-import type { Banner, GameId } from "@/lib/types";
-import { GAME_CONFIG } from "@/lib/game-config";
+import type { Banner } from "@/lib/types";
+import { gameAccentText, gameBadge, gameHeroPanel } from "@/lib/game-config";
 import { cn } from "@/lib/utils";
 
 type GameHeroProps = {
-  gameId: GameId;
   patchStatus: PatchStatus | null;
   activeBanner: Banner | null;
   activeBannerCount: number;
@@ -101,18 +100,13 @@ function FeaturedIcons({ banner }: { banner: Banner }) {
 
 function BannerSpotlight({
   banner,
-  gameId,
   activeBannerCount,
-  accentClass,
   onScrollToBanners,
 }: {
   banner: Banner;
-  gameId: GameId;
   activeBannerCount: number;
-  accentClass: string;
   onScrollToBanners: () => void;
 }) {
-  const config = GAME_CONFIG[gameId];
   const featuredNames = [
     ...banner.characters.filter((c) => c.rarity >= 5),
     ...banner.weapons.filter((w) => w.rarity >= 5),
@@ -137,8 +131,6 @@ function BannerSpotlight({
               banner={banner}
               featuredNames={featuredNames}
               activeBannerCount={activeBannerCount}
-              accentClass={accentClass}
-              config={config}
               onScrollToBanners={onScrollToBanners}
             />
           </div>
@@ -151,8 +143,6 @@ function BannerSpotlight({
               banner={banner}
               featuredNames={featuredNames}
               activeBannerCount={activeBannerCount}
-              accentClass={accentClass}
-              config={config}
               onScrollToBanners={onScrollToBanners}
             />
           </div>
@@ -166,21 +156,17 @@ function SpotlightContent({
   banner,
   featuredNames,
   activeBannerCount,
-  accentClass,
-  config,
   onScrollToBanners,
 }: {
   banner: Banner;
   featuredNames: string[];
   activeBannerCount: number;
-  accentClass: string;
-  config: (typeof GAME_CONFIG)[GameId];
   onScrollToBanners: () => void;
 }) {
   return (
     <>
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="outline" className={`border ${config.bgColor} ${config.color}`}>
+        <Badge variant="outline" className={gameBadge}>
           Active banner
         </Badge>
         {activeBannerCount > 1 && (
@@ -196,14 +182,14 @@ function SpotlightContent({
         <p className="mt-1 text-sm text-foreground/80">{featuredNames.join(" · ")}</p>
       )}
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        <p className={`text-sm font-medium ${accentClass}`}>
+        <p className={`text-sm font-medium ${gameAccentText}`}>
           Ends in{" "}
           <Countdown endDate={new Date(banner.endTime).toISOString()} />
         </p>
         <button
           type="button"
           onClick={onScrollToBanners}
-          className={`text-xs font-medium ${accentClass} hover:underline`}
+          className={`text-xs font-medium ${gameAccentText} hover:underline`}
         >
           View banner details ↓
         </button>
@@ -214,13 +200,11 @@ function SpotlightContent({
 
 function StatsPanel({
   patchStatus,
-  accentClass,
   showDetails,
   onToggleDetails,
   onShowUpcoming,
 }: {
   patchStatus: PatchStatus | null;
-  accentClass: string;
   showDetails: boolean;
   onToggleDetails: () => void;
   onShowUpcoming: () => void;
@@ -248,7 +232,7 @@ function StatsPanel({
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Current patch
             </p>
-            <p className={`mt-1 text-lg font-semibold leading-snug ${accentClass}`}>
+            <p className={`mt-1 text-lg font-semibold leading-snug ${gameAccentText}`}>
               {versionLabel}
             </p>
           </>
@@ -262,7 +246,7 @@ function StatsPanel({
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 Patch ends
               </p>
-              <p className={`text-sm font-mono tabular-nums ${accentClass}`}>
+              <p className={`text-sm font-mono tabular-nums ${gameAccentText}`}>
                 <Countdown endDate={new Date(patchStatus.patchEndTime).toISOString()} />
               </p>
             </div>
@@ -274,7 +258,7 @@ function StatsPanel({
         )}
 
         {patchStatus?.patchEndTime && !patchStatus.patchStartTime && (
-          <p className={`mt-3 text-sm ${accentClass}`}>
+          <p className={`mt-3 text-sm ${gameAccentText}`}>
             Ends in{" "}
             <Countdown endDate={new Date(patchStatus.patchEndTime).toISOString()} />
           </p>
@@ -294,7 +278,7 @@ function StatsPanel({
             <p className="mt-1 text-sm font-medium leading-snug text-foreground">{nextLabel}</p>
           )}
           {nextStartTime && (
-            <p className={`mt-2 text-sm ${accentClass}`}>
+            <p className={`mt-2 text-sm ${gameAccentText}`}>
               Starts in{" "}
               <Countdown endDate={new Date(nextStartTime).toISOString()} />
             </p>
@@ -317,7 +301,6 @@ function StatsPanel({
 }
 
 export function GameHero({
-  gameId,
   patchStatus,
   activeBanner,
   activeBannerCount,
@@ -328,8 +311,6 @@ export function GameHero({
   onShowUpcoming,
   onScrollToBanners,
 }: GameHeroProps) {
-  const config = GAME_CONFIG[gameId];
-
   if (!patchStatus && !activeBanner) {
     return (
       <div className="rounded-2xl border border-dashed border-border/60 bg-card/40 p-5 sm:p-6">
@@ -353,18 +334,11 @@ export function GameHero({
   }
 
   return (
-    <div
-      className={cn(
-        "overflow-hidden rounded-2xl border bg-card/40 backdrop-blur-xl",
-        config.bgColor,
-        "shadow-[0_0_40px_color-mix(in_oklch,var(--game-accent)_12%,transparent)] ring-1 ring-[color-mix(in_oklch,var(--game-accent)_30%,var(--border))]",
-      )}
-    >
+    <div className={cn("overflow-hidden rounded-2xl border backdrop-blur-xl", gameHeroPanel)}>
       <div className="flex flex-col gap-4 p-4 sm:p-5 lg:grid lg:grid-cols-5 lg:gap-5 lg:p-6">
         <div className="order-1 lg:order-2 lg:col-span-2">
           <StatsPanel
             patchStatus={patchStatus}
-            accentClass={config.color}
             showDetails={showDetails}
             onToggleDetails={onToggleDetails}
             onShowUpcoming={onShowUpcoming}
@@ -375,9 +349,7 @@ export function GameHero({
           {activeBanner ? (
             <BannerSpotlight
               banner={activeBanner}
-              gameId={gameId}
               activeBannerCount={activeBannerCount}
-              accentClass={config.color}
               onScrollToBanners={onScrollToBanners}
             />
           ) : (
@@ -391,7 +363,7 @@ export function GameHero({
               <button
                 type="button"
                 onClick={onShowUpcoming}
-                className={`mt-4 text-sm font-medium ${config.color} hover:underline`}
+                className={`mt-4 text-sm font-medium ${gameAccentText} hover:underline`}
               >
                 View upcoming banners →
               </button>

@@ -39,6 +39,7 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+  --color-game-accent: var(--game-accent);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -81,56 +82,115 @@
   --sidebar-accent-foreground: oklch(0.95 0.01 260);
   --sidebar-border: oklch(0.28 0.02 260);
   --sidebar-ring: oklch(0.75 0.15 180);
+  --game-accent: oklch(0.72 0.06 260);
+  --game-glow: oklch(0.72 0.06 260 / 0.06);
+  --game-glow-secondary: oklch(0.55 0.04 260 / 0.03);
 }
 
-/* Per-game ambient background theming (set via data-game-theme on dashboard root) */
+/* Per-game theming — muted CI tones via data-game-theme on dashboard root */
 [data-game-theme="hsr"] {
-  --game-glow: oklch(0.78 0.14 75 / 0.18);
-  --game-glow-secondary: oklch(0.65 0.12 85 / 0.08);
-  --game-accent: oklch(0.78 0.14 75);
+  /* Warm champagne gold */
+  --game-accent: oklch(0.82 0.1 82);
+  --game-glow: oklch(0.82 0.1 82 / 0.1);
+  --game-glow-secondary: oklch(0.68 0.06 78 / 0.05);
 }
 
 [data-game-theme="zzz"] {
-  --game-glow: oklch(0.72 0.16 55 / 0.18);
-  --game-glow-secondary: oklch(0.55 0.14 45 / 0.08);
-  --game-accent: oklch(0.72 0.16 55);
+  /* Coral red — ZZZ brand */
+  --game-accent: oklch(0.67 0.19 24);
+  --game-glow: oklch(0.67 0.19 24 / 0.1);
+  --game-glow-secondary: oklch(0.52 0.14 20 / 0.05);
 }
 
 [data-game-theme="wuwa"] {
-  --game-glow: oklch(0.75 0.12 210 / 0.18);
-  --game-glow-secondary: oklch(0.60 0.10 220 / 0.08);
-  --game-accent: oklch(0.75 0.12 210);
+  /* Muted sea teal */
+  --game-accent: oklch(0.7 0.09 215);
+  --game-glow: oklch(0.7 0.09 215 / 0.1);
+  --game-glow-secondary: oklch(0.55 0.06 220 / 0.05);
 }
 
 [data-game-theme="endfield"] {
-  --game-glow: oklch(0.68 0.14 250 / 0.18);
-  --game-glow-secondary: oklch(0.55 0.10 260 / 0.08);
-  --game-accent: oklch(0.68 0.14 250);
+  /* Industrial steel blue */
+  --game-accent: oklch(0.66 0.12 255);
+  --game-glow: oklch(0.66 0.12 255 / 0.1);
+  --game-glow-secondary: oklch(0.52 0.08 260 / 0.05);
 }
 
 [data-game-theme="n2e"] {
-  --game-glow: oklch(0.70 0.14 300 / 0.18);
-  --game-glow-secondary: oklch(0.55 0.12 290 / 0.08);
-  --game-accent: oklch(0.70 0.14 300);
-}
-
-.game-themed-shell {
-  --game-glow: oklch(0.75 0.15 180 / 0.1);
-  --game-glow-secondary: oklch(0.55 0.08 260 / 0.06);
-  --game-accent: oklch(0.75 0.15 180);
+  /* Dusty rose / lavender */
+  --game-accent: oklch(0.76 0.08 330);
+  --game-glow: oklch(0.76 0.08 330 / 0.1);
+  --game-glow-secondary: oklch(0.62 0.06 320 / 0.05);
 }
 
 .game-themed-bg {
   background-color: var(--background);
   background-image:
-    radial-gradient(ellipse 90% 55% at 50% -15%, var(--game-glow), transparent 65%),
-    radial-gradient(ellipse 50% 40% at 100% 20%, var(--game-glow-secondary), transparent 55%),
-    radial-gradient(ellipse 40% 35% at 0% 80%, var(--game-glow-secondary), transparent 50%);
+    radial-gradient(ellipse 90% 55% at 50% -15%, var(--game-glow), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 100% 20%, var(--game-glow-secondary), transparent 60%),
+    radial-gradient(ellipse 40% 35% at 0% 80%, var(--game-glow-secondary), transparent 55%);
 }
 
 .game-themed-header {
-  border-bottom-color: color-mix(in oklch, var(--game-accent) 25%, var(--border));
-  background: color-mix(in oklch, var(--game-accent) 6%, var(--card) / 0.35);
+  border-bottom-color: color-mix(in oklch, var(--game-accent) 18%, var(--border));
+  background: color-mix(in oklch, var(--game-accent) 4%, var(--card) / 0.35);
+}
+
+.game-tab-active {
+  border-color: color-mix(in oklch, var(--game-accent) 38%, var(--border)) !important;
+  background: color-mix(in oklch, var(--game-accent) 10%, transparent) !important;
+  color: var(--game-accent) !important;
+  box-shadow: 0 0 18px color-mix(in oklch, var(--game-accent) 10%, transparent);
+}
+
+.game-tab-inactive {
+  border-color: color-mix(in oklch, var(--border) 100%, transparent);
+  background: color-mix(in oklch, var(--card) 30%, transparent);
+  color: var(--muted-foreground);
+}
+
+.game-tab-inactive:hover {
+  border-color: color-mix(in oklch, var(--game-accent) 20%, var(--border));
+  background: color-mix(in oklch, var(--game-accent) 4%, transparent);
+  color: var(--foreground);
+}
+
+.game-hero-panel {
+  border-color: color-mix(in oklch, var(--game-accent) 22%, var(--border));
+  background: color-mix(in oklch, var(--game-accent) 4%, var(--card) / 0.45);
+  box-shadow: 0 0 32px color-mix(in oklch, var(--game-accent) 8%, transparent);
+}
+
+.game-panel {
+  border-color: color-mix(in oklch, var(--game-accent) 18%, var(--border));
+  background: color-mix(in oklch, var(--game-accent) 3%, var(--card) / 0.5);
+}
+
+/* Explicit utilities — Tailwind v4 @theme vars don't track runtime [data-game-theme] changes */
+.text-game-accent {
+  color: var(--game-accent);
+}
+
+.border-game-accent-soft {
+  border-color: color-mix(in oklch, var(--game-accent) 25%, var(--border));
+}
+
+.bg-game-accent-soft {
+  background-color: color-mix(in oklch, var(--game-accent) 8%, transparent);
+}
+
+.bg-game-accent-soft:hover {
+  background-color: color-mix(in oklch, var(--game-accent) 12%, transparent);
+}
+
+.game-badge {
+  border-color: color-mix(in oklch, var(--game-accent) 25%, var(--border));
+  background-color: color-mix(in oklch, var(--game-accent) 8%, transparent);
+  color: var(--game-accent);
+}
+
+.game-badge:hover {
+  background-color: color-mix(in oklch, var(--game-accent) 12%, transparent);
 }
 
 .interactive-card {
