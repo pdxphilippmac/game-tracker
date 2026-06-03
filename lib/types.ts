@@ -1,4 +1,14 @@
-export type GameId = "hsr" | "genshin" | "zzz" | "wuwa" | "endfield" | "n2e";
+export type GameId =
+  | "hsr"
+  | "genshin"
+  | "zzz"
+  | "hi3"
+  | "themis"
+  | "wuwa"
+  | "endfield"
+  | "n2e"
+  | "ba"
+  | "stella";
 
 export interface GameInfo {
   id: GameId;
@@ -26,6 +36,18 @@ export const GAMES: Record<GameId, GameInfo> = {
     shortName: "ZZZ",
     website: "https://zenless.hoyoverse.com",
   },
+  hi3: {
+    id: "hi3",
+    name: "Honkai Impact 3rd",
+    shortName: "HI3",
+    website: "https://honkaiimpact3.hoyoverse.com",
+  },
+  themis: {
+    id: "themis",
+    name: "Tears of Themis",
+    shortName: "ToT",
+    website: "https://tot.hoyoverse.com",
+  },
   wuwa: {
     id: "wuwa",
     name: "Wuthering Waves",
@@ -43,6 +65,18 @@ export const GAMES: Record<GameId, GameInfo> = {
     name: "Neverness to Everness",
     shortName: "N2E",
     website: "https://n2e.papegames.com",
+  },
+  ba: {
+    id: "ba",
+    name: "Blue Archive",
+    shortName: "BA",
+    website: "https://bluearchive.nexon.com",
+  },
+  stella: {
+    id: "stella",
+    name: "Stella Sora",
+    shortName: "Stella",
+    website: "https://stellasora.yo-star.com",
   },
 };
 

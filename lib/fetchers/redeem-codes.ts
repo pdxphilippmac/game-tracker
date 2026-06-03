@@ -8,7 +8,12 @@ type EnneadCodesResponse = {
   inactive?: Array<{ code: string; rewards: string[] }>;
 };
 
-export type EnneadGameSlug = "genshin" | "starrail" | "zenless";
+export type EnneadGameSlug =
+  | "genshin"
+  | "starrail"
+  | "zenless"
+  | "honkai"
+  | "themis";
 
 export async function fetchEnneadRedeemCodes(
   game: EnneadGameSlug,

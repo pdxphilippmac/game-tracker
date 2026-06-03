@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Gacha Tracker",
     short_name: "Gacha Tracker",
     description:
-      "Track active banners, events, and news for Honkai Star Rail, Genshin Impact, Zenless Zone Zero, Wuthering Waves, Arknights Endfield, and Neverness to Everness.",
+      "Track active banners, events, and news for HoYoverse, Kuro, Gryphline, Yostar, and Nexon gacha games.",
     start_url: "/",
     display: "standalone",
     orientation: "portrait",

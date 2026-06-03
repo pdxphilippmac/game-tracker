@@ -1,10 +1,11 @@
 import type { GameData } from "@/lib/types";
+import { GAME_IDS } from "@/lib/game-config";
 
 const reloadFreshGames =
   typeof window !== "undefined" &&
   (performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined)
     ?.type === "reload"
-    ? new Set(["hsr", "genshin", "zzz", "wuwa", "endfield", "n2e"])
+    ? new Set<string>(GAME_IDS)
     : null;
 
 export async function fetchGameData(

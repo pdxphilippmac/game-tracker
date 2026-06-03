@@ -1,6 +1,10 @@
 export { fetchHSRData } from "./hsr";
 export { fetchGenshinData } from "./genshin";
 export { fetchZZZData } from "./zzz";
+export { fetchHI3Data } from "./hi3";
+export { fetchThemisData } from "./themis";
 export { fetchWuWaData } from "./wuwa";
 export { fetchEndfieldData } from "./endfield";
 export { fetchN2EData } from "./n2e";
+export { fetchBlueArchiveData } from "./blue-archive";
+export { fetchStellaSoraData } from "./stella-sora";

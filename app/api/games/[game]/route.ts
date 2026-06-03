@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { GameId, GameData } from "@/lib/types";
+import { GAME_IDS } from "@/lib/game-config";
 import { getFromCache, setInCache } from "@/lib/cache";
 import { DATA_REVALIDATE_SECONDS } from "@/lib/fetch-config";
 import { emptyGameData } from "@/lib/fetchers/empty-game-data";
@@ -7,20 +8,26 @@ import {
   fetchHSRData,
   fetchGenshinData,
   fetchZZZData,
+  fetchHI3Data,
+  fetchThemisData,
   fetchWuWaData,
   fetchEndfieldData,
   fetchN2EData,
+  fetchBlueArchiveData,
+  fetchStellaSoraData,
 } from "@/lib/fetchers";
-
-const VALID_GAMES: GameId[] = ["hsr", "genshin", "zzz", "wuwa", "endfield", "n2e"];
 
 const fetchers: Record<GameId, () => Promise<GameData>> = {
   hsr: fetchHSRData,
   genshin: fetchGenshinData,
   zzz: fetchZZZData,
+  hi3: fetchHI3Data,
+  themis: fetchThemisData,
   wuwa: fetchWuWaData,
   endfield: fetchEndfieldData,
   n2e: fetchN2EData,
+  ba: fetchBlueArchiveData,
+  stella: fetchStellaSoraData,
 };
 
 export const dynamic = "force-dynamic";
@@ -33,9 +40,9 @@ export async function GET(
   const url = new URL(request.url);
   const skipCache = url.searchParams.get("refresh") === "true";
 
-  if (!VALID_GAMES.includes(game as GameId)) {
+  if (!GAME_IDS.includes(game as GameId)) {
     return NextResponse.json(
-      { error: `Invalid game. Valid options: ${VALID_GAMES.join(", ")}` },
+      { error: `Invalid game. Valid options: ${GAME_IDS.join(", ")}` },
       { status: 400 }
     );
   }

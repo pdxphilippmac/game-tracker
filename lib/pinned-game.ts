@@ -1,3 +1,4 @@
+import { GAME_IDS } from "@/lib/game-config";
 import type { GameId } from "@/lib/types";
 
 const STORAGE_KEY = "gacha-tracker-pinned-game";
@@ -7,15 +8,8 @@ export function getPinnedGame(): GameId | null {
     return null;
   }
   const value = localStorage.getItem(STORAGE_KEY);
-  if (
-    value === "hsr" ||
-    value === "genshin" ||
-    value === "zzz" ||
-    value === "wuwa" ||
-    value === "endfield" ||
-    value === "n2e"
-  ) {
-    return value;
+  if (value && (GAME_IDS as readonly string[]).includes(value)) {
+    return value as GameId;
   }
   return null;
 }

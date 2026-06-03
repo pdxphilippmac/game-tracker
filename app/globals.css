@@ -130,6 +130,34 @@
   --game-glow-secondary: oklch(0.62 0.06 320 / 0.05);
 }
 
+[data-game-theme="hi3"] {
+  /* Honkai pink */
+  --game-accent: oklch(0.72 0.16 350);
+  --game-glow: oklch(0.72 0.16 350 / 0.1);
+  --game-glow-secondary: oklch(0.58 0.1 345 / 0.05);
+}
+
+[data-game-theme="themis"] {
+  /* Warm legal gold */
+  --game-accent: oklch(0.78 0.1 85);
+  --game-glow: oklch(0.78 0.1 85 / 0.1);
+  --game-glow-secondary: oklch(0.64 0.07 80 / 0.05);
+}
+
+[data-game-theme="ba"] {
+  /* Blue Archive sky cyan */
+  --game-accent: oklch(0.72 0.12 230);
+  --game-glow: oklch(0.72 0.12 230 / 0.1);
+  --game-glow-secondary: oklch(0.58 0.08 235 / 0.05);
+}
+
+[data-game-theme="stella"] {
+  /* Stella Sora violet */
+  --game-accent: oklch(0.68 0.14 295);
+  --game-glow: oklch(0.68 0.14 295 / 0.1);
+  --game-glow-secondary: oklch(0.54 0.1 290 / 0.05);
+}
+
 .game-themed-bg {
   background-color: var(--background);
   background-image:

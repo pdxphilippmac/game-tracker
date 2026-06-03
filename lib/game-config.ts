@@ -19,26 +19,55 @@ export const GAME_CONFIG: Record<GameId, GameThemeConfig> = {
     name: "Honkai: Star Rail",
     shortName: "HSR",
   },
+
+  zzz: {
+    name: "Zenless Zone Zero",
+    shortName: "ZZZ",
+  },
+
+  endfield: {
+    name: "Arknights: Endfield",
+    shortName: "Endfield",
+  },
   genshin: {
     name: "Genshin Impact",
     shortName: "GI",
   },
-  zzz: {
-    name: "Zenless Zone Zero",
-    shortName: "ZZZ",
+  hi3: {
+    name: "Honkai Impact 3rd",
+    shortName: "HI3",
+  },
+  themis: {
+    name: "Tears of Themis",
+    shortName: "ToT",
   },
   wuwa: {
     name: "Wuthering Waves",
     shortName: "WuWa",
   },
-  endfield: {
-    name: "Arknights: Endfield",
-    shortName: "Endfield",
-  },
   n2e: {
     name: "Neverness to Everness",
     shortName: "NTE",
   },
+  ba: {
+    name: "Blue Archive",
+    shortName: "BA",
+  },
+  stella: {
+    name: "Stella Sora",
+    shortName: "Stella",
+  },
 };
 
-export const GAME_IDS: GameId[] = ["hsr", "genshin", "zzz", "wuwa", "endfield", "n2e"];
+export const GAME_IDS: GameId[] = [
+  "hsr",
+  "zzz",
+  "genshin",
+  "endfield",
+  "wuwa",
+  "hi3",
+  "themis",
+  "n2e",
+  "ba",
+  "stella",
+];

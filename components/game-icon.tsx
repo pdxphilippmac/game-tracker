@@ -176,13 +176,106 @@ function N2eIcon({ className, ...props }: IconProps) {
   );
 }
 
+function Hi3Icon({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      className={cn("shrink-0", className)}
+      {...props}
+    >
+      <path
+        d="M12 4.5 15.5 12 12 19.5 8.5 12 12 4.5Z"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M12 8v8M9.5 10.5h5M9.5 13.5h5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function ThemisIcon({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      className={cn("shrink-0", className)}
+      {...props}
+    >
+      <path
+        d="M12 4.5v15M7.5 7.5h9M8 19.5h8"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+      <path
+        d="M9.5 7.5 12 4.5 14.5 7.5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function BaIcon({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      className={cn("shrink-0", className)}
+      {...props}
+    >
+      <circle cx="12" cy="12" r="7.25" stroke="currentColor" strokeWidth="1.75" />
+      <path
+        d="M12 6.5v11M8.5 9.5h7M8.5 14.5h7"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function StellaIcon({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      className={cn("shrink-0", className)}
+      {...props}
+    >
+      <path
+        d="M12 4.25 13.8 9.5 19.25 9.5 14.9 12.75 16.5 18 12 14.9 7.5 18 9.1 12.75 4.75 9.5 10.2 9.5 12 4.25Z"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 const GAME_ICONS: Record<GameId, ComponentType<IconProps>> = {
   hsr: HsrIcon,
   genshin: GenshinIcon,
   zzz: ZzzIcon,
+  hi3: Hi3Icon,
+  themis: ThemisIcon,
   wuwa: WuwaIcon,
   endfield: EndfieldIcon,
   n2e: N2eIcon,
+  ba: BaIcon,
+  stella: StellaIcon,
 };
 
 type GameIconProps = IconProps & {
