@@ -17,6 +17,7 @@ import { fetchEnneadRedeemCodes } from "@/lib/fetchers/redeem-codes";
 import { isAnnouncementKind } from "@/lib/news-classify";
 import { parseDateRangeFromText } from "@/lib/date-parse";
 import { deriveHSRPatchStatus } from "@/lib/patch-status";
+import { buildActivityId } from "@/lib/activity-id";
 import { emptyGameData } from "@/lib/fetchers/empty-game-data";
 import { upstreamFetchInit } from "@/lib/fetch-config";
 
@@ -144,7 +145,7 @@ function mapBanner(banner: HSRBanner): Banner {
 
 function mapEvent(event: HSREvent): GameEvent {
   return {
-    id: `hsr-event-${event.id}`,
+    id: buildActivityId("hsr", "event", event.id, event.start_time, event.name),
     name: event.name,
     description: event.description || undefined,
     imageUrl: event.image_url || undefined,
@@ -163,7 +164,13 @@ function mapEvent(event: HSREvent): GameEvent {
 
 function mapChallenge(challenge: HSRChallenge): Challenge {
   return {
-    id: `hsr-challenge-${challenge.id}`,
+    id: buildActivityId(
+      "hsr",
+      "challenge",
+      challenge.id,
+      challenge.start_time,
+      challenge.name,
+    ),
     name: challenge.name,
     type: formatActivityType(challenge.type_name),
     startTime: challenge.start_time * 1000,

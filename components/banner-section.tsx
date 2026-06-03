@@ -2,15 +2,18 @@
 
 import type { ReactNode } from "react";
 import { Banner, GameId } from "@/lib/types";
+import type { PatchStatus } from "@/lib/patch-types";
 import { gameAccentText, gameBadge } from "@/lib/game-config";
 import { isRunningActivity, isUpcomingActivity, sortByEndTime, sortByStartTime } from "@/lib/activity-utils";
 import { BannerCard } from "@/components/banner-card";
 import { BannerPreviewCard } from "@/components/banner-preview-card";
+import { BannerTimeline } from "@/components/banner-timeline";
 import { EmptyState } from "@/components/empty-state";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type BannerSectionProps = {
   banners: Banner[];
+  patchStatus: PatchStatus | null;
   gameId: GameId;
   icon: ReactNode;
   tab: string;
@@ -21,6 +24,7 @@ type BannerSectionProps = {
 
 export function BannerSection({
   banners,
+  patchStatus,
   gameId,
   icon,
   tab,
@@ -110,6 +114,8 @@ export function BannerSection({
           )}
         </TabsContent>
       </Tabs>
+
+      <BannerTimeline patchStatus={patchStatus} banners={banners} className="mt-4" />
     </section>
   );
 }

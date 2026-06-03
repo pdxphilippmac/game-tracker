@@ -309,6 +309,7 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
 
       <BannerSection
         banners={data.banners}
+        patchStatus={data.patchStatus}
         gameId={gameId}
         icon={starIcon}
         tab={bannerTab}

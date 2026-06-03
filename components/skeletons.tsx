@@ -83,3 +83,24 @@ export function GameContentSkeleton() {
     </div>
   );
 }
+
+export function OverviewSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div className="space-y-2">
+        <Skeleton className="h-7 w-32" />
+        <Skeleton className="h-4 w-64" />
+      </div>
+      <div className="space-y-2">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <Skeleton key={`alert-${index}`} className="h-16 w-full rounded-xl" />
+        ))}
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <Skeleton key={`game-${index}`} className="h-28 w-full rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
