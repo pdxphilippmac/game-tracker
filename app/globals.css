@@ -83,12 +83,62 @@
   --sidebar-ring: oklch(0.75 0.15 180);
 }
 
+/* Per-game ambient background theming (set via data-game-theme on dashboard root) */
+[data-game-theme="hsr"] {
+  --game-glow: oklch(0.78 0.14 75 / 0.18);
+  --game-glow-secondary: oklch(0.65 0.12 85 / 0.08);
+  --game-accent: oklch(0.78 0.14 75);
+}
+
+[data-game-theme="zzz"] {
+  --game-glow: oklch(0.72 0.16 55 / 0.18);
+  --game-glow-secondary: oklch(0.55 0.14 45 / 0.08);
+  --game-accent: oklch(0.72 0.16 55);
+}
+
+[data-game-theme="wuwa"] {
+  --game-glow: oklch(0.75 0.12 210 / 0.18);
+  --game-glow-secondary: oklch(0.60 0.10 220 / 0.08);
+  --game-accent: oklch(0.75 0.12 210);
+}
+
+[data-game-theme="endfield"] {
+  --game-glow: oklch(0.68 0.14 250 / 0.18);
+  --game-glow-secondary: oklch(0.55 0.10 260 / 0.08);
+  --game-accent: oklch(0.68 0.14 250);
+}
+
+[data-game-theme="n2e"] {
+  --game-glow: oklch(0.70 0.14 300 / 0.18);
+  --game-glow-secondary: oklch(0.55 0.12 290 / 0.08);
+  --game-accent: oklch(0.70 0.14 300);
+}
+
+.game-themed-shell {
+  --game-glow: oklch(0.75 0.15 180 / 0.1);
+  --game-glow-secondary: oklch(0.55 0.08 260 / 0.06);
+  --game-accent: oklch(0.75 0.15 180);
+}
+
+.game-themed-bg {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse 90% 55% at 50% -15%, var(--game-glow), transparent 65%),
+    radial-gradient(ellipse 50% 40% at 100% 20%, var(--game-glow-secondary), transparent 55%),
+    radial-gradient(ellipse 40% 35% at 0% 80%, var(--game-glow-secondary), transparent 50%);
+}
+
+.game-themed-header {
+  border-bottom-color: color-mix(in oklch, var(--game-accent) 25%, var(--border));
+  background: color-mix(in oklch, var(--game-accent) 6%, var(--card) / 0.35);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply overflow-x-hidden bg-background text-foreground;
   }
   html {
     @apply font-sans;
