@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GameContent } from "@/components/game-content";
+import { GameIcon } from "@/components/game-icon";
 import { GAME_CONFIG, GAME_IDS } from "@/lib/game-config";
 import type { GameHeaderMeta } from "@/lib/game-header-meta";
 import { formatDateTime } from "@/lib/format";
@@ -29,9 +30,9 @@ export function Dashboard() {
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <div
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${activeConfig.bgColor} ${activeConfig.color} text-lg transition-colors duration-500 motion-reduce:transition-none`}
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${activeConfig.bgColor} ${activeConfig.color} transition-colors duration-500 motion-reduce:transition-none`}
               >
-                {activeConfig.icon}
+                <GameIcon gameId={activeGame} className="h-5 w-5" />
               </div>
               <div className="min-w-0">
                 <h1 className="truncate text-lg font-bold text-foreground sm:text-xl">
@@ -108,9 +109,9 @@ export function Dashboard() {
                       `}
                     >
                       <span className="flex items-center gap-2">
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center text-lg leading-none sm:h-auto sm:w-auto sm:text-xl">
-                          {config.icon}
-                        </span>
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center sm:h-auto sm:w-auto">
+                        <GameIcon gameId={gameId} className="h-5 w-5 sm:h-[1.35rem] sm:w-[1.35rem]" />
+                      </span>
                         <span className="text-xs font-semibold leading-snug sm:text-sm">
                           {config.shortName}
                         </span>

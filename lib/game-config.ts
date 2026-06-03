@@ -5,7 +5,6 @@ export type GameThemeConfig = {
   shortName: string;
   color: string;
   bgColor: string;
-  icon: string;
   /** Full Tailwind classes for active tab state (must be static strings). */
   tabActive: string;
   tabInactive: string;
@@ -17,7 +16,6 @@ export const GAME_CONFIG: Record<GameId, GameThemeConfig> = {
     shortName: "HSR",
     color: "text-amber-400",
     bgColor: "bg-amber-400/10 hover:bg-amber-400/20 border-amber-400/30",
-    icon: "✦",
     tabActive:
       "border-amber-400/50 !bg-amber-400/15 !text-amber-300 shadow-[0_0_20px_rgba(251,191,36,0.15)]",
     tabInactive:
@@ -28,7 +26,6 @@ export const GAME_CONFIG: Record<GameId, GameThemeConfig> = {
     shortName: "ZZZ",
     color: "text-orange-400",
     bgColor: "bg-orange-400/10 hover:bg-orange-400/20 border-orange-400/30",
-    icon: "◈",
     tabActive:
       "border-orange-400/50 !bg-orange-400/15 !text-orange-300 shadow-[0_0_20px_rgba(251,146,60,0.15)]",
     tabInactive:
@@ -39,7 +36,6 @@ export const GAME_CONFIG: Record<GameId, GameThemeConfig> = {
     shortName: "WuWa",
     color: "text-cyan-400",
     bgColor: "bg-cyan-400/10 hover:bg-cyan-400/20 border-cyan-400/30",
-    icon: "◇",
     tabActive:
       "border-cyan-400/50 !bg-cyan-400/15 !text-cyan-300 shadow-[0_0_20px_rgba(34,211,238,0.15)]",
     tabInactive:
@@ -50,7 +46,6 @@ export const GAME_CONFIG: Record<GameId, GameThemeConfig> = {
     shortName: "Endfield",
     color: "text-blue-400",
     bgColor: "bg-blue-400/10 hover:bg-blue-400/20 border-blue-400/30",
-    icon: "◆",
     tabActive:
       "border-blue-400/50 !bg-blue-400/15 !text-blue-300 shadow-[0_0_20px_rgba(96,165,250,0.15)]",
     tabInactive:
@@ -61,7 +56,6 @@ export const GAME_CONFIG: Record<GameId, GameThemeConfig> = {
     shortName: "NTE",
     color: "text-purple-400",
     bgColor: "bg-purple-400/10 hover:bg-purple-400/20 border-purple-400/30",
-    icon: "❖",
     tabActive:
       "border-purple-400/50 !bg-purple-400/15 !text-purple-300 shadow-[0_0_20px_rgba(192,132,252,0.15)]",
     tabInactive:

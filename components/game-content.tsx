@@ -9,6 +9,7 @@ import { fetchGameData } from "@/lib/game-data-fetcher";
 import { DATA_REVALIDATE_SECONDS } from "@/lib/fetch-config";
 import type { GameHeaderMeta } from "@/lib/game-header-meta";
 import { GameHero } from "@/components/game-hero";
+import { GameIcon } from "@/components/game-icon";
 import { PatchStatusBanner } from "@/components/patch-status-banner";
 import { BannerSection } from "@/components/banner-section";
 import { EventCard } from "@/components/event-card";
@@ -118,7 +119,9 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
   if (error || !data) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className={`mb-4 text-4xl ${config.color}`}>{config.icon}</div>
+        <div className={`mb-4 ${config.color}`}>
+          <GameIcon gameId={gameId} className="mx-auto h-10 w-10" />
+        </div>
         <h3 className="mb-2 text-lg font-medium text-foreground">
           Failed to load {config.name}
         </h3>
