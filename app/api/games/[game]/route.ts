@@ -5,16 +5,18 @@ import { DATA_REVALIDATE_SECONDS } from "@/lib/fetch-config";
 import { emptyGameData } from "@/lib/fetchers/empty-game-data";
 import {
   fetchHSRData,
+  fetchGenshinData,
   fetchZZZData,
   fetchWuWaData,
   fetchEndfieldData,
   fetchN2EData,
 } from "@/lib/fetchers";
 
-const VALID_GAMES: GameId[] = ["hsr", "zzz", "wuwa", "endfield", "n2e"];
+const VALID_GAMES: GameId[] = ["hsr", "genshin", "zzz", "wuwa", "endfield", "n2e"];
 
 const fetchers: Record<GameId, () => Promise<GameData>> = {
   hsr: fetchHSRData,
+  genshin: fetchGenshinData,
   zzz: fetchZZZData,
   wuwa: fetchWuWaData,
   endfield: fetchEndfieldData,

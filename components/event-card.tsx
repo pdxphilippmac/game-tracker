@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ActivityTimeBar } from "@/components/activity-time-bar";
 import { CardMedia } from "@/components/card-media";
+import { RewardGrid } from "@/components/reward-grid";
 import { GameEvent, GameId } from "@/lib/types";
 import { gameAccentText, gameBadge } from "@/lib/game-config";
 
@@ -46,31 +46,7 @@ export function EventCard({ event, gameId }: EventCardProps) {
                 <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   Rewards
                 </p>
-                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                  {event.rewards.map((reward) => (
-                    <div
-                      key={String(reward.id)}
-                      className="flex items-start gap-2 rounded-lg border border-border/40 bg-background/40 p-2.5"
-                    >
-                      {reward.icon && (
-                        <Image
-                          src={reward.icon}
-                          alt=""
-                          width={32}
-                          height={32}
-                          className="mt-0.5 h-8 w-8 shrink-0 rounded-sm object-cover"
-                          unoptimized
-                        />
-                      )}
-                      <div className="min-w-0">
-                        <p className="text-sm leading-snug text-foreground">{reward.name}</p>
-                        {reward.amount > 0 && (
-                          <p className="text-xs text-muted-foreground">×{reward.amount}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <RewardGrid rewards={event.rewards} />
               </div>
             )}
 

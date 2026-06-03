@@ -19,6 +19,10 @@ export const GAME_CONFIG: Record<GameId, GameThemeConfig> = {
     name: "Honkai: Star Rail",
     shortName: "HSR",
   },
+  genshin: {
+    name: "Genshin Impact",
+    shortName: "GI",
+  },
   zzz: {
     name: "Zenless Zone Zero",
     shortName: "ZZZ",
@@ -37,4 +41,4 @@ export const GAME_CONFIG: Record<GameId, GameThemeConfig> = {
   },
 };
 
-export const GAME_IDS: GameId[] = ["hsr", "zzz", "wuwa", "endfield", "n2e"];
+export const GAME_IDS: GameId[] = ["hsr", "genshin", "zzz", "wuwa", "endfield", "n2e"];

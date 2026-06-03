@@ -26,6 +26,10 @@ export function classifyAnnouncementKind(
 
   if (
     text.includes("event warp") ||
+    text.includes("event wish") ||
+    text.includes("character event wish") ||
+    text.includes("weapon event wish") ||
+    text.includes("chronicled wish") ||
     text.includes("limited-time channel") ||
     text.includes("signal search") ||
     text.includes("featured resonator") ||

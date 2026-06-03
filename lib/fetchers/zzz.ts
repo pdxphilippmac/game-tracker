@@ -10,6 +10,7 @@ import {
 } from "@/lib/news-classify";
 import { parseDateRangeFromText, parseSingleDateFromText } from "@/lib/date-parse";
 import { deriveZZYPatchStatus } from "@/lib/patch-status";
+import { fetchEnneadRedeemCodes } from "@/lib/fetchers/redeem-codes";
 import { emptyGameData } from "@/lib/fetchers/empty-game-data";
 
 const DEFAULT_BANNER_DAYS = 21;
@@ -184,7 +185,10 @@ function mapNewsWithKind(item: EnneadNewsItem, prefix: string): NewsItem {
 
 export async function fetchZZZData(): Promise<GameData> {
   try {
-    const newsItems = await fetchEnneadNews("zenless", ["info", "notices", "events"]);
+    const [newsItems, redeemCodes] = await Promise.all([
+      fetchEnneadNews("zenless", ["info", "notices", "events"]),
+      fetchEnneadRedeemCodes("zenless"),
+    ]);
 
     const banners: Banner[] = [];
     const events: GameEvent[] = [];
@@ -217,6 +221,7 @@ export async function fetchZZZData(): Promise<GameData> {
       challenges: [],
       announcements: announcements.slice(0, 8),
       news: news.slice(0, 10),
+      redeemCodes: redeemCodes.filter((code) => code.active),
       lastUpdated: new Date().toISOString(),
     };
   } catch (error) {

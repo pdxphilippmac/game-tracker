@@ -15,7 +15,7 @@ export type EnneadNewsItem = {
 const API_BASE = "https://api.ennead.cc/mihoyo";
 
 export async function fetchEnneadNews(
-  game: "starrail" | "zenless",
+  game: "starrail" | "zenless" | "genshin",
   endpoints: Array<"info" | "notices" | "events"> = ["info", "notices", "events"]
 ): Promise<EnneadNewsItem[]> {
   const results: EnneadNewsItem[] = [];

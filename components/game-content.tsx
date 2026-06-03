@@ -5,9 +5,10 @@ import useSWR from "swr";
 import { GameId, GameData, GAMES } from "@/lib/types";
 import { GAME_CONFIG } from "@/lib/game-config";
 import { gameAccentText } from "@/lib/game-config";
-import { isRunningActivity, sortByEndTime } from "@/lib/activity-utils";
+import { isRunningActivity, isUpcomingActivity, sortByEndTime, sortByStartTime } from "@/lib/activity-utils";
 import { fetchGameData } from "@/lib/game-data-fetcher";
 import { DATA_REVALIDATE_SECONDS } from "@/lib/fetch-config";
+import { findUpcomingSpecialProgram } from "@/lib/special-program";
 import type { GameHeaderMeta } from "@/lib/game-header-meta";
 import { GameHero } from "@/components/game-hero";
 import { GameIcon } from "@/components/game-icon";
@@ -20,6 +21,10 @@ import { NewsCard } from "@/components/news-card";
 import { EmptyState } from "@/components/empty-state";
 import { SectionNav, type SectionNavItem } from "@/components/section-nav";
 import { GameContentSkeleton } from "@/components/skeletons";
+import { EndingSoonBar } from "@/components/ending-soon-bar";
+import { StartingSoonBar } from "@/components/starting-soon-bar";
+import { WeeklyPicksSection } from "@/components/weekly-picks-section";
+import { RedeemCodesSection } from "@/components/redeem-codes-section";
 
 interface GameContentProps {
   gameId: GameId;
@@ -132,20 +137,21 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
     );
   }
 
-  const activeEvents = sortByEndTime(
+  const activeEvents = sortByEndTime(data.events.filter(isRunningActivity));
+  const upcomingEvents = sortByStartTime(
     data.events.filter((event) => {
       const now = Date.now();
-      return event.endTime > now && event.startTime <= now;
+      return isUpcomingActivity(event) && event.startTime - now <= 7 * 24 * 60 * 60 * 1000;
     }),
   );
-  const activeChallenges = sortByEndTime(
-    data.challenges.filter((challenge) => {
-      const now = Date.now();
-      return challenge.endTime > now && challenge.startTime <= now;
-    }),
-  );
-  const announcements = data.announcements ?? [];
+  const activeChallenges = sortByEndTime(data.challenges.filter(isRunningActivity));
+  const announcements = [...(data.announcements ?? [])].sort((a, b) => {
+    if (a.kind === "special_program" && b.kind !== "special_program") return -1;
+    if (b.kind === "special_program" && a.kind !== "special_program") return 1;
+    return 0;
+  });
   const news = data.news ?? [];
+  const specialProgram = findUpcomingSpecialProgram(announcements);
 
   const phaseLabelsByStart = new Map<number, string>();
   if (data.patchStatus?.currentPhase?.startTime) {
@@ -178,8 +184,14 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
   const navSections: SectionNavItem[] = [
     { id: "patch-status", label: "Overview" },
     { id: "banners", label: "Banners" },
-    { id: "events", label: "Events" },
   ];
+  if (data.challenges.some((c) => isRunningActivity(c) && c.rewards?.length)) {
+    navSections.push({ id: "weekly-picks", label: "This week" });
+  }
+  if (data.redeemCodes?.some((code) => code.active)) {
+    navSections.push({ id: "redeem-codes", label: "Codes" });
+  }
+  navSections.push({ id: "events", label: "Events" });
   if (activeChallenges.length > 0) {
     navSections.push({ id: "challenges", label: "Challenges" });
   }
@@ -263,6 +275,7 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
           patchStatus={data.patchStatus}
           activeBanner={primaryBanner}
           activeBannerCount={activeBanners.length}
+          specialProgram={specialProgram}
           dataError={data.error}
           officialUrl={GAMES[gameId].website}
           showDetails={patchDetailsOpen}
@@ -270,6 +283,9 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
           onShowUpcoming={showUpcomingBanners}
           onScrollToBanners={scrollToBanners}
         />
+
+        <EndingSoonBar data={data} />
+        <StartingSoonBar events={data.events} challenges={data.challenges} />
 
         {patchDetailsOpen && (
           <PatchStatusBanner
@@ -301,6 +317,12 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
         onShowUpcoming={showUpcomingBanners}
       />
 
+      <WeeklyPicksSection events={data.events} challenges={data.challenges} />
+
+      {data.redeemCodes && data.redeemCodes.length > 0 && (
+        <RedeemCodesSection codes={data.redeemCodes} />
+      )}
+
       <section id="events" className="scroll-mt-36">
         <SectionHeading
           icon={eventIcon}
@@ -318,6 +340,22 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
             icon={eventIcon}
             message="No active in-game events right now"
           />
+        )}
+
+        {upcomingEvents.length > 0 && (
+          <div className="mt-8">
+            <h3 className="mb-4 text-base font-semibold text-foreground">
+              Starting soon
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                ({upcomingEvents.length})
+              </span>
+            </h3>
+            <div className="flex flex-col gap-4">
+              {upcomingEvents.map((event) => (
+                <EventCard key={String(event.id)} event={event} gameId={gameId} />
+              ))}
+            </div>
+          </div>
         )}
       </section>
 

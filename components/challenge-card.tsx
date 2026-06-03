@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ActivityTimeBar } from "@/components/activity-time-bar";
+import { RewardGrid } from "@/components/reward-grid";
 import { Challenge, GameId } from "@/lib/types";
 import { gameAccentText, gameBadge } from "@/lib/game-config";
 
@@ -26,6 +27,15 @@ export function ChallengeCard({ challenge, gameId }: ChallengeCardProps) {
             {challenge.type}
           </Badge>
         </div>
+
+        {challenge.rewards && challenge.rewards.length > 0 && (
+          <div className="mt-4 space-y-2">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Rewards
+            </p>
+            <RewardGrid rewards={challenge.rewards} />
+          </div>
+        )}
 
         <ActivityTimeBar
           startTime={challenge.startTime}

@@ -1,4 +1,5 @@
 export { fetchHSRData } from "./hsr";
+export { fetchGenshinData } from "./genshin";
 export { fetchZZZData } from "./zzz";
 export { fetchWuWaData } from "./wuwa";
 export { fetchEndfieldData } from "./endfield";

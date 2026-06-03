@@ -7,7 +7,6 @@ import type {
   GameEvent,
   NewsItem,
 } from "@/lib/types";
-import { HSR_ELEMENTS, HSR_PATHS } from "@/lib/types";
 import {
   fetchEnneadNews,
   mapEnneadNewsItem,
@@ -20,35 +19,42 @@ import { deriveHSRPatchStatus } from "@/lib/patch-status";
 import { emptyGameData } from "@/lib/fetchers/empty-game-data";
 import { upstreamFetchInit } from "@/lib/fetch-config";
 
-const API_BASE = "https://api.ennead.cc/mihoyo/starrail";
+const API_BASE = "https://api.ennead.cc/mihoyo/genshin";
 
-type HSRCharacter = {
+type GICharacter = {
   id: number;
   name: string;
   icon: string;
   element: string;
-  path: string;
   rarity: number;
 };
 
-type HSRLightCone = {
+type GIWeapon = {
   id: number;
   name: string;
   icon: string;
   rarity: number;
 };
 
-type HSRBanner = {
+type GIBanner = {
   id: number;
   name: string;
   version: string;
-  characters: HSRCharacter[];
-  light_cones: HSRLightCone[];
+  characters: GICharacter[];
+  weapons: GIWeapon[];
   start_time: number;
   end_time: number;
 };
 
-type HSREvent = {
+type GIReward = {
+  id: number;
+  name: string;
+  icon: string;
+  rarity: string;
+  amount: number;
+};
+
+type GIEvent = {
   id: number;
   name: string;
   description: string;
@@ -56,57 +62,44 @@ type HSREvent = {
   type_name: string;
   start_time: number;
   end_time: number;
-  rewards?: Array<{
-    id: number;
-    name: string;
-    icon: string;
-    rarity: string;
-    amount: number;
-  }>;
+  rewards?: GIReward[];
 };
 
-type HSRChallenge = {
+type GIChallenge = {
   id: number;
   name: string;
   type_name: string;
   start_time: number;
   end_time: number;
-  rewards?: Array<{
-    id: number;
-    name: string;
-    icon: string;
-    rarity: string;
-    amount: number;
-  }>;
+  rewards?: GIReward[];
 };
 
-type HSRCalendarResponse = {
-  events: HSREvent[];
-  banners: HSRBanner[];
-  challenges: HSRChallenge[];
+type GICalendarResponse = {
+  events: GIEvent[];
+  banners: GIBanner[];
+  challenges: GIChallenge[];
 };
 
-function mapCharacter(char: HSRCharacter): BannerCharacter {
+function mapCharacter(char: GICharacter): BannerCharacter {
   return {
     id: char.id,
     name: char.name,
     icon: char.icon,
-    element: HSR_ELEMENTS[char.element] ?? char.element,
-    path: HSR_PATHS[char.path] ?? char.path,
+    element: char.element,
     rarity: char.rarity,
   };
 }
 
-function mapLightCone(cone: HSRLightCone): BannerWeapon {
+function mapWeapon(weapon: GIWeapon): BannerWeapon {
   return {
-    id: cone.id,
-    name: cone.name,
-    icon: cone.icon,
-    rarity: cone.rarity,
+    id: weapon.id,
+    name: weapon.name,
+    icon: weapon.icon,
+    rarity: weapon.rarity,
   };
 }
 
-function buildBannerName(banner: HSRBanner): string {
+function buildBannerName(banner: GIBanner): string {
   if (banner.name.trim()) return banner.name;
 
   const featuredChars = banner.characters
@@ -116,71 +109,69 @@ function buildBannerName(banner: HSRBanner): string {
     return featuredChars.join(" & ");
   }
 
-  const featuredCones = banner.light_cones
-    .filter((c) => c.rarity >= 5)
-    .map((c) => c.name);
-  if (featuredCones.length > 0) {
-    return featuredCones.slice(0, 2).join(" & ");
+  const featuredWeapons = banner.weapons
+    .filter((w) => w.rarity >= 5)
+    .map((w) => w.name);
+  if (featuredWeapons.length > 0) {
+    return featuredWeapons.slice(0, 2).join(" & ");
   }
 
   return `Version ${banner.version} Banner`;
 }
 
-function mapBanner(banner: HSRBanner): Banner {
-  const hasLightCones = banner.light_cones.length > 0;
+function mapBanner(banner: GIBanner): Banner {
+  const hasWeapons = banner.weapons.length > 0;
   const featuredChars = banner.characters.filter((c) => c.rarity >= 5);
 
   return {
-    id: `hsr-banner-${banner.id}`,
+    id: `genshin-banner-${banner.id}`,
     name: buildBannerName(banner),
     version: banner.version,
-    type: hasLightCones && featuredChars.length === 0 ? "weapon" : "character",
+    type: hasWeapons && featuredChars.length === 0 ? "weapon" : "character",
     characters: banner.characters.map(mapCharacter),
-    weapons: banner.light_cones.map(mapLightCone),
+    weapons: banner.weapons.map(mapWeapon),
     startTime: banner.start_time * 1000,
     endTime: banner.end_time * 1000,
   };
 }
 
-function mapEvent(event: HSREvent): GameEvent {
+function mapReward(reward: GIReward) {
   return {
-    id: `hsr-event-${event.id}`,
+    id: reward.id,
+    name: reward.name,
+    icon: reward.icon,
+    rarity: reward.rarity,
+    amount: reward.amount,
+  };
+}
+
+function mapEvent(event: GIEvent): GameEvent {
+  return {
+    id: `genshin-event-${event.id}`,
     name: event.name,
     description: event.description || undefined,
     imageUrl: event.image_url || undefined,
     type: formatActivityType(event.type_name),
     startTime: event.start_time * 1000,
     endTime: event.end_time * 1000,
-    rewards: event.rewards?.map((reward) => ({
-      id: reward.id,
-      name: reward.name,
-      icon: reward.icon,
-      rarity: reward.rarity,
-      amount: reward.amount,
-    })),
+    rewards: event.rewards?.map(mapReward),
   };
 }
 
-function mapChallenge(challenge: HSRChallenge): Challenge {
+function mapChallenge(challenge: GIChallenge): Challenge {
   return {
-    id: `hsr-challenge-${challenge.id}`,
+    id: `genshin-challenge-${challenge.id}`,
     name: challenge.name,
     type: formatActivityType(challenge.type_name),
     startTime: challenge.start_time * 1000,
     endTime: challenge.end_time * 1000,
-    rewards: challenge.rewards?.map((reward) => ({
-      id: reward.id,
-      name: reward.name,
-      icon: reward.icon,
-      rarity: reward.rarity,
-      amount: reward.amount,
-    })),
+    rewards: challenge.rewards?.map(mapReward),
   };
 }
 
 function formatActivityType(typeName: string): string {
   return typeName
-    .replace(/^ActivityType|^ChallengeType/, "")
+    .replace(/^ActType|^ChallengeType/, "")
     .replace(/([A-Z])/g, " $1")
     .trim();
 }
@@ -204,7 +195,7 @@ function splitNewsItems(items: NewsItem[]): {
 }
 
 function mapNoticeItem(item: EnneadNewsItem): NewsItem {
-  const mapped = mapEnneadNewsItem(item, "hsr");
+  const mapped = mapEnneadNewsItem(item, "genshin");
   const range = item.description ? parseDateRangeFromText(item.description) : null;
 
   if (range && mapped.kind === "banner_info") {
@@ -219,15 +210,15 @@ function mapNoticeItem(item: EnneadNewsItem): NewsItem {
   return mapped;
 }
 
-export async function fetchHSRData(): Promise<GameData> {
+export async function fetchGenshinData(): Promise<GameData> {
   try {
     const [calendarRes, noticeItems, redeemCodes] = await Promise.all([
       fetch(`${API_BASE}/calendar?lang=en-us`, {
         ...upstreamFetchInit,
         headers: { Accept: "application/json" },
       }),
-      fetchEnneadNews("starrail", ["notices", "info"]),
-      fetchEnneadRedeemCodes("starrail"),
+      fetchEnneadNews("genshin", ["notices", "info"]),
+      fetchEnneadRedeemCodes("genshin"),
     ]);
 
     const banners: Banner[] = [];
@@ -235,7 +226,7 @@ export async function fetchHSRData(): Promise<GameData> {
     const challenges: Challenge[] = [];
 
     if (calendarRes.ok) {
-      const calendarData: HSRCalendarResponse = await calendarRes.json();
+      const calendarData: GICalendarResponse = await calendarRes.json();
 
       banners.push(...(calendarData.banners ?? []).map(mapBanner));
       events.push(...(calendarData.events ?? []).map(mapEvent));
@@ -247,7 +238,7 @@ export async function fetchHSRData(): Promise<GameData> {
     const patchStatus = deriveHSRPatchStatus(banners, noticeItems);
 
     return {
-      game: "hsr",
+      game: "genshin",
       patchStatus,
       banners,
       events,
@@ -258,7 +249,7 @@ export async function fetchHSRData(): Promise<GameData> {
       lastUpdated: new Date().toISOString(),
     };
   } catch (error) {
-    console.error("HSR fetch error:", error);
-    return emptyGameData("hsr", "Failed to fetch HSR data");
+    console.error("Genshin fetch error:", error);
+    return emptyGameData("genshin", "Failed to fetch Genshin Impact data");
   }
 }

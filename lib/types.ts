@@ -1,4 +1,4 @@
-export type GameId = "hsr" | "zzz" | "wuwa" | "endfield" | "n2e";
+export type GameId = "hsr" | "genshin" | "zzz" | "wuwa" | "endfield" | "n2e";
 
 export interface GameInfo {
   id: GameId;
@@ -13,6 +13,12 @@ export const GAMES: Record<GameId, GameInfo> = {
     name: "Honkai: Star Rail",
     shortName: "HSR",
     website: "https://hsr.hoyoverse.com",
+  },
+  genshin: {
+    id: "genshin",
+    name: "Genshin Impact",
+    shortName: "GI",
+    website: "https://genshin.hoyoverse.com",
   },
   zzz: {
     id: "zzz",
@@ -98,6 +104,7 @@ export interface Challenge {
   type: string;
   startTime: number;
   endTime: number;
+  rewards?: EventReward[];
 }
 
 export type AnnouncementKind =
@@ -106,6 +113,12 @@ export type AnnouncementKind =
   | "special_program"
   | "banner_info"
   | "general";
+
+export type RedeemCode = {
+  code: string;
+  rewards: string[];
+  active: boolean;
+};
 
 // News item
 export interface NewsItem {
@@ -130,6 +143,7 @@ export interface GameData {
   challenges: Challenge[];
   announcements: NewsItem[];
   news: NewsItem[];
+  redeemCodes?: RedeemCode[];
   lastUpdated: string;
   error?: string;
 }

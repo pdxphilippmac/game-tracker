@@ -34,6 +34,38 @@ function HsrIcon({ className, ...props }: IconProps) {
   );
 }
 
+function GenshinIcon({ className, ...props }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      className={cn("shrink-0", className)}
+      {...props}
+    >
+      {/* Anemo-style wind swirl */}
+      <path
+        d="M12 4.5c-2.5 0-4 1.5-4 3.5s1.5 3.5 4 3.5 4 1.5 4 3.5-1.5 3.5-4 3.5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+      <path
+        d="M8 12c-2.5 0-4 1.5-4 3.5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+      <path
+        d="M16 12c2.5 0 4 1.5 4 3.5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 function ZzzIcon({ className, ...props }: IconProps) {
   return (
     <svg
@@ -146,6 +178,7 @@ function N2eIcon({ className, ...props }: IconProps) {
 
 const GAME_ICONS: Record<GameId, ComponentType<IconProps>> = {
   hsr: HsrIcon,
+  genshin: GenshinIcon,
   zzz: ZzzIcon,
   wuwa: WuwaIcon,
   endfield: EndfieldIcon,

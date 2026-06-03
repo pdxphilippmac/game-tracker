@@ -95,6 +95,13 @@
   --game-glow-secondary: oklch(0.68 0.06 78 / 0.05);
 }
 
+[data-game-theme="genshin"] {
+  /* Amber gold — Genshin brand */
+  --game-accent: oklch(0.78 0.12 75);
+  --game-glow: oklch(0.78 0.12 75 / 0.1);
+  --game-glow-secondary: oklch(0.62 0.08 70 / 0.05);
+}
+
 [data-game-theme="zzz"] {
   /* Coral red — ZZZ brand */
   --game-accent: oklch(0.67 0.19 24);

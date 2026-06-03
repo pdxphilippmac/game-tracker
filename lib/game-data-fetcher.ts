@@ -4,7 +4,7 @@ const reloadFreshGames =
   typeof window !== "undefined" &&
   (performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined)
     ?.type === "reload"
-    ? new Set(["hsr", "zzz", "wuwa", "endfield", "n2e"])
+    ? new Set(["hsr", "genshin", "zzz", "wuwa", "endfield", "n2e"])
     : null;
 
 export async function fetchGameData(

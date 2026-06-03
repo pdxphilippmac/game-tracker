@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { RarityStars } from "@/components/rarity-stars";
 import type { PatchStatus } from "@/lib/patch-types";
 import type { Banner } from "@/lib/types";
+import type { SpecialProgramInfo } from "@/lib/special-program";
+import { isSpecialProgramLive } from "@/lib/special-program";
+import { formatDateTime } from "@/lib/format";
 import { gameAccentText, gameBadge, gameHeroPanel } from "@/lib/game-config";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +17,7 @@ type GameHeroProps = {
   patchStatus: PatchStatus | null;
   activeBanner: Banner | null;
   activeBannerCount: number;
+  specialProgram?: SpecialProgramInfo | null;
   dataError?: string;
   officialUrl?: string;
   showDetails: boolean;
@@ -198,6 +202,57 @@ function SpotlightContent({
   );
 }
 
+function SpecialProgramSpotlight({ program }: { program: SpecialProgramInfo }) {
+  const { announcement, airTime } = program;
+  const isLive = isSpecialProgramLive(airTime);
+  const hasStarted = airTime !== null && Date.now() >= airTime;
+
+  return (
+    <div className="rounded-xl border border-cyan-400/30 bg-cyan-400/5 p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge
+          variant="outline"
+          className="border-cyan-400/30 bg-cyan-400/10 text-cyan-300"
+        >
+          {isLive ? "Live now" : "Special Program"}
+        </Badge>
+        {airTime && (
+          <span className="text-xs text-muted-foreground">
+            {formatDateTime(new Date(airTime).toISOString())}
+          </span>
+        )}
+      </div>
+      <h3 className="mt-2 text-base font-semibold leading-snug text-foreground">
+        <a
+          href={announcement.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="transition-colors hover:text-cyan-300"
+        >
+          {announcement.title}
+        </a>
+      </h3>
+      {airTime && !hasStarted && (
+        <p className={`mt-2 text-sm font-medium ${gameAccentText}`}>
+          Starts in{" "}
+          <Countdown endDate={new Date(airTime).toISOString()} />
+        </p>
+      )}
+      {isLive && (
+        <p className="mt-2 text-sm font-medium text-cyan-300">Stream is airing now</p>
+      )}
+      <a
+        href={announcement.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 inline-block text-xs font-medium text-cyan-300/80 hover:text-cyan-300"
+      >
+        Open announcement →
+      </a>
+    </div>
+  );
+}
+
 function StatsPanel({
   patchStatus,
   showDetails,
@@ -304,6 +359,7 @@ export function GameHero({
   patchStatus,
   activeBanner,
   activeBannerCount,
+  specialProgram,
   dataError,
   officialUrl,
   showDetails,
@@ -335,6 +391,11 @@ export function GameHero({
 
   return (
     <div className={cn("overflow-hidden rounded-2xl border backdrop-blur-xl", gameHeroPanel)}>
+      {specialProgram && (
+        <div className="border-b border-cyan-400/15 px-4 pt-4 sm:px-5 sm:pt-5 lg:px-6">
+          <SpecialProgramSpotlight program={specialProgram} />
+        </div>
+      )}
       <div className="flex flex-col gap-4 p-4 sm:p-5 lg:grid lg:grid-cols-5 lg:gap-5 lg:p-6">
         <div className="order-1 lg:order-2 lg:col-span-2">
           <StatsPanel
