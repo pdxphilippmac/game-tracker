@@ -8,7 +8,9 @@ export function ServiceWorkerRegister() {
       return;
     }
 
-    navigator.serviceWorker.register("/sw.js").catch((error: unknown) => {
+    navigator.serviceWorker.register("/sw.js").then((registration) => {
+      registration.update().catch(() => undefined);
+    }).catch((error: unknown) => {
       console.error("Service worker registration failed:", error);
     });
   }, []);

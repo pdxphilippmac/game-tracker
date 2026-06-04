@@ -1,9 +1,18 @@
-const CACHE_NAME = "gacha-tracker-v1";
+const CACHE_NAME = "gacha-tracker-v2";
 const OFFLINE_URL = "/offline";
+const STATIC_ASSETS = [OFFLINE_URL, "/icon.svg"];
+
+function isApiRequest(url) {
+  return url.pathname.startsWith("/api/");
+}
+
+function isStaticAssetRequest(url) {
+  return STATIC_ASSETS.includes(url.pathname);
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll([OFFLINE_URL, "/icon.svg"])),
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS)),
   );
   self.skipWaiting();
 });
@@ -24,6 +33,13 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  const url = new URL(event.request.url);
+
+  // API responses must always be fresh (showcase builds, game data, etc.).
+  if (isApiRequest(url)) {
+    return;
+  }
+
   if (event.request.mode === "navigate") {
     event.respondWith(
       fetch(event.request).catch(async () => {
@@ -31,6 +47,10 @@ self.addEventListener("fetch", (event) => {
         return (await cache.match(OFFLINE_URL)) ?? Response.error();
       }),
     );
+    return;
+  }
+
+  if (!isStaticAssetRequest(url)) {
     return;
   }
 

@@ -42,7 +42,10 @@ export async function GET(
 
   if (cached) {
     return NextResponse.json(cached, {
-      headers: { "X-Cache": "HIT" },
+      headers: {
+        "X-Cache": "HIT",
+        "Cache-Control": "private, no-store",
+      },
     });
   }
 
@@ -52,7 +55,10 @@ export async function GET(
     setInCache(cacheKey, data, ttlMs);
 
     return NextResponse.json(data, {
-      headers: { "X-Cache": "MISS" },
+      headers: {
+        "X-Cache": "MISS",
+        "Cache-Control": "private, no-store",
+      },
     });
   } catch (error) {
     if (error instanceof ShowcaseFetchError) {

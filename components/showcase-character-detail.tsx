@@ -298,35 +298,29 @@ export function ShowcaseCharacterDetail({
         </span>
       </summary>
 
-      <div className="border-t border-border/40 p-4 pt-3">
-        {build ? (
-          <>
-            {gameId === "hsr" && character.hsrBuild ? (
-              <HsrBuildPanel build={character.hsrBuild} />
-            ) : null}
-            {gameId === "zzz" && character.zzzBuild ? (
-              <ZzzBuildPanel build={character.zzzBuild} />
-            ) : null}
-            {gameId === "hsr" && (
-              <p className="mt-4 text-[11px] text-muted-foreground">
-                Final stats include character base, light cone, relics, traces, and
-                static 2-piece set bonuses. Conditional 4-piece effects and
-                eidolon bonuses may not be included.
-              </p>
-            )}
-            {gameId === "zzz" && (
-              <p className="mt-4 text-[11px] text-muted-foreground">
-                Disc stats are summed from Enka showcase data. Final in-game totals
-                include agent base stats, core skills, and set passives.
-              </p>
-            )}
-          </>
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            Build details are not available for this character.
-          </p>
-        )}
-      </div>
+      {build && (
+        <div className="border-t border-border/40 p-4 pt-3">
+          {gameId === "hsr" && character.hsrBuild ? (
+            <HsrBuildPanel build={character.hsrBuild} />
+          ) : null}
+          {gameId === "zzz" && character.zzzBuild ? (
+            <ZzzBuildPanel build={character.zzzBuild} />
+          ) : null}
+          {gameId === "hsr" && (
+            <p className="mt-4 text-[11px] text-muted-foreground">
+              Final stats include character base, light cone, relics, traces, and
+              static 2-piece set bonuses. Conditional 4-piece effects and
+              eidolon bonuses may not be included.
+            </p>
+          )}
+          {gameId === "zzz" && (
+            <p className="mt-4 text-[11px] text-muted-foreground">
+              Disc stats are summed from Enka showcase data. Final in-game totals
+              include agent base stats, core skills, and set passives.
+            </p>
+          )}
+        </div>
+      )}
     </details>
   );
 }
