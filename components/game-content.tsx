@@ -25,6 +25,8 @@ import { EndingSoonBar } from "@/components/ending-soon-bar";
 import { StartingSoonBar } from "@/components/starting-soon-bar";
 import { WeeklyPicksSection } from "@/components/weekly-picks-section";
 import { RedeemCodesSection } from "@/components/redeem-codes-section";
+import { ShowcaseSection } from "@/components/showcase-section";
+import { isShowcaseGame } from "@/lib/showcase-games";
 
 interface GameContentProps {
   gameId: GameId;
@@ -183,6 +185,9 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
 
   const navSections: SectionNavItem[] = [
     { id: "patch-status", label: "Overview" },
+    ...(isShowcaseGame(gameId)
+      ? [{ id: "showcase", label: "Showcase" } satisfies SectionNavItem]
+      : []),
     { id: "banners", label: "Banners" },
   ];
   if (data.challenges.some((c) => isRunningActivity(c) && c.rewards?.length)) {
@@ -300,6 +305,8 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
       </section>
 
       <SectionNav sections={navSections} />
+
+      {isShowcaseGame(gameId) && <ShowcaseSection gameId={gameId} />}
 
       {data.error && data.banners.length + data.events.length + data.news.length > 0 && (
         <div className="rounded-lg border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm text-amber-200">

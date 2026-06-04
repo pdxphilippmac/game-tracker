@@ -287,7 +287,7 @@ export function Dashboard() {
       <footer className="mt-auto border-t border-border/40 bg-card/20 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 text-center text-xs text-muted-foreground sm:text-sm">
           <p>
-            Data from official sources and community APIs. Not affiliated with miHoYo,
+            Data from official sources and Enka.Network (showcase). Not affiliated with miHoYo,
             Kuro Games, Hypergryph, or Papergames.
           </p>
         </div>
