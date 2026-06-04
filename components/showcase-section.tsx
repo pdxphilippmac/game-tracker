@@ -140,7 +140,7 @@ export function ShowcaseSection({ gameId }: ShowcaseSectionProps) {
                 pattern="[0-9]*"
                 autoComplete="off"
                 maxLength={SHOWCASE_UID_MAX_LENGTH}
-                placeholder={gameId === "zzz" ? "1504787828" : "717141410"}
+                placeholder={gameId === "zzz" ? "1234567890" : "123456789"}
                 value={inputUid}
                 onChange={(event) => setInputUid(normalizeShowcaseUid(event.target.value))}
                 className="w-full min-w-0 rounded-lg border border-border/60 bg-background/60 px-3 py-2 font-mono text-base tabular-nums tracking-wide text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
