@@ -119,6 +119,24 @@ export function Dashboard() {
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
+              <a
+                href="https://ko-fi.com/philipp87710"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${toolbarButton} kofi-btn`}
+                aria-label="Support on Ko-fi (opens in new tab)"
+              >
+                <svg
+                  className="h-3.5 w-3.5"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M6.5 3C4.57 3 3 4.57 3 6.5v11C3 19.43 4.57 21 6.5 21h11c1.93 0 3.5-1.57 3.5-3.5v-11C21 4.57 19.43 3 17.5 3h-11Zm0 1.5h11c1.1 0 2 .9 2 2v7.8c-.6-.4-1.3-.6-2.1-.6-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4h.1c.3 0 .6-.1.9-.2.5 1.1 1.6 1.9 2.9 1.9 1.8 0 3.2-1.4 3.2-3.2 0-1.3-.8-2.4-1.9-2.9.1-.3.2-.6.2-.9V6.5c0-1.1-.9-2-2-2h-11Zm8.5 10.5c1.4 0 2.5 1.1 2.5 2.5S16.4 20 15 20s-2.5-1.1-2.5-2.5 1.1-2.5 2.5-2.5Z" />
+                </svg>
+                Ko-fi
+              </a>
+
               <Link href="/timeline" className={`hidden sm:inline-flex ${toolbarButton}`}>
                 Timeline
               </Link>
