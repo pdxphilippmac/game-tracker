@@ -1,4 +1,6 @@
 import { resolveHsrCharacter, resolveZzzCharacter } from "@/lib/enka-metadata";
+import { parseHsrCharacterBuild } from "@/lib/fetchers/parse-hsr-build";
+import { parseZzzCharacterBuild } from "@/lib/fetchers/parse-zzz-build";
 import type {
   PlayerShowcase,
   ShowcaseCharacter,
@@ -100,32 +102,16 @@ function enkaUrl(gameId: ShowcaseGameId, uid: string): string {
   return `${ENKA_API}/zzz/uid/${uid}`;
 }
 
-type HsrAvatarDetail = {
-  avatarId: number;
-  level: number;
-  rank?: number | null;
-  promotion?: number;
-};
-
 type HsrDetailInfo = {
   nickname?: string;
   signature?: string;
   level?: number;
   worldLevel?: number;
-  avatarDetailList?: HsrAvatarDetail[];
+  avatarDetailList?: Parameters<typeof parseHsrCharacterBuild>[0][];
 };
 
 type HsrEnkaResponse = {
   detailInfo?: HsrDetailInfo;
-  uid?: number | string;
-  ttl?: number;
-};
-
-type ZzzAvatar = {
-  Id: number;
-  Level: number;
-  TalentLevel?: number;
-  PromotionLevel?: number;
 };
 
 type ZzzEnkaResponse = {
@@ -138,11 +124,9 @@ type ZzzEnkaResponse = {
       Desc?: string;
     };
     ShowcaseDetail?: {
-      AvatarList?: ZzzAvatar[];
+      AvatarList?: Parameters<typeof parseZzzCharacterBuild>[0][];
     };
   };
-  uid?: number | string;
-  ttl?: number;
 };
 
 async function parseHsrShowcase(
@@ -165,13 +149,15 @@ async function parseHsrShowcase(
       element: meta.element,
       path: meta.path,
       specialLevel: avatar.rank ?? 0,
+      promotion: avatar.promotion,
+      hsrBuild: await parseHsrCharacterBuild(avatar),
     });
   }
 
   return {
     uid,
     gameId: "hsr",
-    nickname: detail.nickname ?? "Traveler",
+    nickname: detail.nickname ?? "Trailblazer",
     signature: detail.signature,
     level: detail.level ?? 0,
     worldLevel: detail.worldLevel,
@@ -201,6 +187,8 @@ async function parseZzzShowcase(
       level: avatar.Level,
       rarity: meta.rarity,
       specialLevel: avatar.TalentLevel ?? 0,
+      promotion: avatar.PromotionLevel,
+      zzzBuild: await parseZzzCharacterBuild(avatar),
     });
   }
 
@@ -218,13 +206,14 @@ async function parseZzzShowcase(
 }
 
 export class ShowcaseFetchError extends Error {
-  constructor(
-    message: string,
-    readonly code: ShowcaseErrorCode,
-    readonly status: number,
-  ) {
+  code: ShowcaseErrorCode;
+  status: number;
+
+  constructor(message: string, code: ShowcaseErrorCode, status: number) {
     super(message);
     this.name = "ShowcaseFetchError";
+    this.code = code;
+    this.status = status;
   }
 }
 

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import useSWR from "swr";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RarityStars } from "@/components/rarity-stars";
+import { ShowcaseCharacterDetail } from "@/components/showcase-character-detail";
 import { fetchPlayerShowcaseClient } from "@/lib/showcase-fetcher";
 import { gameAccentText, gamePanel } from "@/lib/game-config";
 import {
@@ -18,11 +18,6 @@ import { cn } from "@/lib/utils";
 
 type ShowcaseSectionProps = {
   gameId: ShowcaseGameId;
-};
-
-const SPECIAL_LEVEL_LABEL: Record<ShowcaseGameId, string> = {
-  hsr: "Eidolon",
-  zzz: "Mindscape",
 };
 
 function userIcon() {
@@ -189,41 +184,13 @@ export function ShowcaseSection({ gameId }: ShowcaseSectionProps) {
                   and add characters to your display slots.
                 </p>
               ) : (
-                <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                <ul className="flex flex-col gap-3">
                   {data.characters.map((character) => (
-                    <li
-                      key={character.id}
-                      className="rounded-xl border border-border/50 bg-background/40 p-3"
-                    >
-                      <div className="flex items-start gap-3">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={character.iconUrl}
-                          alt=""
-                          width={48}
-                          height={48}
-                          className="h-12 w-12 shrink-0 rounded-full bg-muted/30 object-cover"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-semibold text-foreground">
-                            {character.name}
-                          </p>
-                          <RarityStars rarity={character.rarity} />
-                          <p className="mt-1 text-xs text-muted-foreground">
-                            Lv. {character.level}
-                            {character.specialLevel !== undefined &&
-                              character.specialLevel > 0 &&
-                              ` · ${SPECIAL_LEVEL_LABEL[gameId]} ${character.specialLevel}`}
-                          </p>
-                          {(character.element || character.path) && (
-                            <p className="mt-0.5 text-[11px] text-muted-foreground">
-                              {[character.element, character.path]
-                                .filter(Boolean)
-                                .join(" · ")}
-                            </p>
-                          )}
-                        </div>
-                      </div>
+                    <li key={character.id}>
+                      <ShowcaseCharacterDetail
+                        character={character}
+                        gameId={gameId}
+                      />
                     </li>
                   ))}
                 </ul>

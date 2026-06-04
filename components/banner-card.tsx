@@ -82,8 +82,8 @@ export function BannerCard({ banner, gameId, featured = false, priority = false 
   return (
     <Card
       className={cn(
-        "interactive-card border-border/50 bg-card/50 backdrop-blur-sm",
-        featured && "shadow-[0_0_30px_color-mix(in_oklch,var(--game-accent)_15%,transparent)] ring-1 ring-[color-mix(in_oklch,var(--game-accent)_35%,var(--border))]",
+        "interactive-card border-border bg-card/50 backdrop-blur-sm",
+        featured && "ring-1 ring-border",
       )}
     >
       <CardContent className="p-0">

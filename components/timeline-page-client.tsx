@@ -1,7 +1,9 @@
 "use client";
 
 import { TimelinePageHeader, TimelineView } from "@/components/timeline-view";
+import { BackToTop } from "@/components/back-to-top";
 import { OverviewSkeleton } from "@/components/skeletons";
+import { toolbarButton } from "@/lib/game-config";
 import { useAllGamesData } from "@/lib/use-all-games-data";
 
 export function TimelinePageClient() {
@@ -17,7 +19,7 @@ export function TimelinePageClient() {
             type="button"
             onClick={() => void refresh()}
             disabled={isValidating}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-card/40 px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-card/70 disabled:opacity-50"
+            className={toolbarButton}
           >
             {isValidating ? "Loading…" : "Refresh"}
           </button>
@@ -38,6 +40,8 @@ export function TimelinePageClient() {
           </p>
         </div>
       </footer>
+
+      <BackToTop />
     </div>
   );
 }

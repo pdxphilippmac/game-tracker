@@ -5,14 +5,15 @@ import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GameContent } from "@/components/game-content";
 import { CrossGameOverview } from "@/components/cross-game-overview";
+import { BackToTop } from "@/components/back-to-top";
 import { GameIcon } from "@/components/game-icon";
 import {
   GAME_CONFIG,
   GAME_IDS,
-  gameAccentText,
   gameIconBox,
   gameTabActive,
   gameTabInactive,
+  toolbarButton,
 } from "@/lib/game-config";
 import { getPinnedGame, setPinnedGame, sortGameIds } from "@/lib/pinned-game";
 import type { GameHeaderMeta } from "@/lib/game-header-meta";
@@ -90,14 +91,14 @@ export function Dashboard() {
   return (
     <div
       data-game-theme={themeGame}
-      className="game-themed-shell game-themed-bg flex min-h-screen flex-col overflow-x-hidden transition-[background] duration-700 ease-out motion-reduce:transition-none"
+      className="game-themed-shell game-themed-bg flex min-h-screen flex-col"
     >
-      <header className="game-themed-header sticky top-0 z-50 border-b backdrop-blur-md transition-[background,border-color] duration-700 motion-reduce:transition-none">
+      <header className="game-themed-header sticky top-0 z-50 border-b backdrop-blur-sm">
         <div className="container mx-auto px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <div
-                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${gameIconBox} transition-colors duration-500 motion-reduce:transition-none`}
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${gameIconBox}`}
               >
                 {activeTab === "overview" ? (
                   <OverviewTabIcon className="h-5 w-5" />
@@ -106,12 +107,10 @@ export function Dashboard() {
                 )}
               </div>
               <div className="min-w-0">
-                <h1 className="truncate text-lg font-bold text-foreground sm:text-xl">
+                <h1 className="truncate text-base font-semibold tracking-tight text-foreground sm:text-lg">
                   Gacha Tracker
                 </h1>
-                <p
-                  className={`truncate text-xs transition-colors duration-500 motion-reduce:transition-none sm:text-sm ${gameAccentText}`}
-                >
+                <p className="truncate text-xs text-muted-foreground sm:text-sm">
                   {showHeaderActions && headerMeta?.summary
                     ? headerMeta.summary
                     : activeConfig.name}
@@ -120,10 +119,7 @@ export function Dashboard() {
             </div>
 
             <div className="flex shrink-0 items-center gap-2">
-              <Link
-                href="/timeline"
-                className="hidden rounded-lg border border-border/60 bg-card/40 px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-card/70 sm:inline-block"
-              >
+              <Link href="/timeline" className={`hidden sm:inline-flex ${toolbarButton}`}>
                 Timeline
               </Link>
 
@@ -134,8 +130,9 @@ export function Dashboard() {
                   aria-label={pinnedGame === activeTab ? "Unpin game" : "Pin game"}
                   aria-pressed={pinnedGame === activeTab}
                   className={cn(
-                    "rounded-lg border border-border/60 bg-card/40 p-2 text-foreground transition-colors hover:bg-card/70",
-                    pinnedGame === activeTab && gameAccentText,
+                    toolbarButton,
+                    "p-2",
+                    pinnedGame === activeTab && "border-[color-mix(in_oklch,var(--game-accent)_25%,var(--border))] text-game-accent",
                   )}
                 >
                   <svg
@@ -162,7 +159,7 @@ export function Dashboard() {
                     onClick={() => void headerMeta.onRefresh()}
                     disabled={headerMeta.isValidating}
                     aria-label="Refresh game data"
-                    className={`inline-flex items-center gap-1.5 rounded-lg border border-border/60 bg-card/40 px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-card/70 disabled:opacity-50 ${gameAccentText}`}
+                    className={`${toolbarButton} disabled:opacity-50`}
                   >
                     <svg
                       className={`h-3.5 w-3.5 ${headerMeta.isValidating ? "animate-spin motion-reduce:animate-none" : ""}`}
@@ -190,7 +187,7 @@ export function Dashboard() {
         </div>
       </header>
 
-      <main className="container mx-auto min-w-0 max-w-5xl flex-1 px-4 py-5 sm:py-6">
+      <main className="container mx-auto min-w-0 max-w-5xl flex-1 px-4 py-5 sm:py-6 xl:max-w-[76rem]">
         <Tabs
           value={activeTab}
           onValueChange={(v) => setActiveTab(v as DashboardTab)}
@@ -200,20 +197,20 @@ export function Dashboard() {
             <div className="overflow-x-auto overscroll-x-contain pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:overflow-visible sm:pb-0 [&::-webkit-scrollbar]:hidden">
               <TabsList
                 variant="line"
-                className="inline-flex !h-auto w-max flex-nowrap snap-x snap-mandatory items-center gap-2.5 rounded-none bg-transparent p-0 sm:flex sm:w-full sm:flex-wrap sm:justify-start sm:gap-2"
+                className="inline-flex !h-auto w-max flex-nowrap snap-x snap-mandatory items-center gap-1 rounded-none bg-transparent p-0 sm:flex sm:w-full sm:flex-wrap sm:justify-start"
               >
                 <TabsTrigger
                   value="overview"
                   className={`
-                    !h-auto !flex-none min-h-[3.25rem] shrink-0 snap-start rounded-2xl border px-3.5 py-2.5
-                    transition-all duration-300 motion-reduce:transition-none after:hidden
-                    sm:min-h-[2.75rem] sm:rounded-xl sm:px-4 sm:py-2.5
+                    !h-auto !flex-none min-h-[2.5rem] shrink-0 snap-start rounded-lg border px-3 py-2
+                    transition-colors duration-150 motion-reduce:transition-none after:hidden
+                    sm:min-h-[2.25rem] sm:px-3.5
                     ${activeTab === "overview" ? gameTabActive : gameTabInactive}
                   `}
                 >
                   <span className="flex items-center gap-2">
                     <OverviewTabIcon className="h-5 w-5 shrink-0" />
-                    <span className="text-xs font-semibold leading-snug sm:text-sm">Overview</span>
+                    <span className="text-xs font-medium leading-snug sm:text-sm">Overview</span>
                   </span>
                 </TabsTrigger>
 
@@ -225,9 +222,9 @@ export function Dashboard() {
                       key={gameId}
                       value={gameId}
                       className={`
-                        relative !h-auto !flex-none min-h-[3.25rem] shrink-0 snap-start rounded-2xl border px-3.5 py-2.5
-                        transition-all duration-300 motion-reduce:transition-none after:hidden
-                        sm:min-h-[2.75rem] sm:rounded-xl sm:px-4 sm:py-2.5
+                        relative !h-auto !flex-none min-h-[2.5rem] shrink-0 snap-start rounded-lg border px-3 py-2
+                        transition-colors duration-150 motion-reduce:transition-none after:hidden
+                        sm:min-h-[2.25rem] sm:px-3.5
                         ${isActive ? gameTabActive : gameTabInactive}
                       `}
                     >
@@ -244,7 +241,7 @@ export function Dashboard() {
                             />
                           )}
                         </span>
-                        <span className="text-xs font-semibold leading-snug sm:text-sm">
+                        <span className="text-xs font-medium leading-snug sm:text-sm">
                           {GAME_CONFIG[gameId].shortName}
                         </span>
                       </span>
@@ -284,14 +281,16 @@ export function Dashboard() {
         </Tabs>
       </main>
 
-      <footer className="mt-auto border-t border-border/40 bg-card/20 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4 text-center text-xs text-muted-foreground sm:text-sm">
+      <footer className="mt-auto border-t border-border bg-background">
+        <div className="container mx-auto px-4 py-5 text-center text-xs text-muted-foreground">
           <p>
             Data from official sources and Enka.Network (showcase). Not affiliated with miHoYo,
             Kuro Games, Hypergryph, or Papergames.
           </p>
         </div>
       </footer>
+
+      <BackToTop />
     </div>
   );
 }

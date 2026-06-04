@@ -2,7 +2,7 @@ import { buildBannerTimeline, type TimelineEntry } from "@/lib/banner-timeline";
 import { collectEndingSoonItems, ENDING_SOON_KIND_LABELS, type EndingSoonKind } from "@/lib/ending-soon";
 import { collectStartingSoonItems, STARTING_SOON_KIND_LABELS, type StartingSoonKind } from "@/lib/starting-soon";
 import { findUpcomingSpecialProgram, isSpecialProgramLive } from "@/lib/special-program";
-import { isRunningActivity } from "@/lib/activity-utils";
+import { isRunningActivity, sortByEndTime } from "@/lib/activity-utils";
 import { GAME_CONFIG } from "@/lib/game-config";
 import type { GameData, GameId, RedeemCode } from "@/lib/types";
 
@@ -38,6 +38,14 @@ export type GameSnapshot = {
   activeCodes: number;
   patchVersion?: string;
   hasError: boolean;
+};
+
+export type ActiveBannerEntry = {
+  id: string;
+  gameId: GameId;
+  shortName: string;
+  banner: GameData["banners"][number];
+  featuredNames: string[];
 };
 
 export const CROSS_GAME_ALERT_LABELS: Record<CrossGameAlertKind, string> = {
@@ -201,6 +209,30 @@ export function buildCrossGameTimeline(
   }
 
   return entries.sort((a, b) => a.startTime - b.startTime);
+}
+
+export function collectActiveBanners(allData: GameData[]): ActiveBannerEntry[] {
+  const entries: ActiveBannerEntry[] = [];
+
+  for (const data of allData) {
+    const config = GAME_CONFIG[data.game];
+    for (const banner of sortByEndTime(data.banners.filter(isRunningActivity))) {
+      const featuredNames = [
+        ...banner.characters.filter((c) => c.rarity >= 5),
+        ...banner.weapons.filter((w) => w.rarity >= 5),
+      ].map((item) => item.name);
+
+      entries.push({
+        id: `${data.game}-${banner.id}`,
+        gameId: data.game,
+        shortName: config.shortName,
+        banner,
+        featuredNames,
+      });
+    }
+  }
+
+  return entries.sort((a, b) => a.banner.endTime - b.banner.endTime);
 }
 
 export function buildGameSnapshots(allData: GameData[]): GameSnapshot[] {

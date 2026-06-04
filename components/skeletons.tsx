@@ -92,6 +92,14 @@ export function OverviewSkeleton() {
         <Skeleton className="h-4 w-64" />
       </div>
       <div className="space-y-2">
+        <Skeleton className="h-4 w-28" />
+        <div className="flex gap-3 overflow-hidden">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <Skeleton key={`banner-${index}`} className="h-32 w-44 shrink-0 rounded-xl" />
+          ))}
+        </div>
+      </div>
+      <div className="space-y-2">
         {Array.from({ length: 4 }).map((_, index) => (
           <Skeleton key={`alert-${index}`} className="h-16 w-full rounded-xl" />
         ))}

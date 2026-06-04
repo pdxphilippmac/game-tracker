@@ -274,7 +274,8 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_11rem] xl:gap-10">
+      <div className="min-w-0 space-y-8">
       <section id="patch-status" className="scroll-mt-36 space-y-4">
         <GameHero
           patchStatus={data.patchStatus}
@@ -304,7 +305,7 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
         )}
       </section>
 
-      <SectionNav sections={navSections} />
+      <SectionNav sections={navSections} variant="mobile" />
 
       {isShowcaseGame(gameId) && <ShowcaseSection gameId={gameId} />}
 
@@ -430,6 +431,11 @@ export function GameContent({ gameId, onHeaderMetaChange }: GameContentProps) {
       <p className="text-center text-xs text-muted-foreground">
         Auto-refreshes every {Math.round(DATA_REVALIDATE_SECONDS / 60)} min
       </p>
+      </div>
+
+      <aside className="hidden min-h-0 self-stretch xl:block">
+        <SectionNav sections={navSections} variant="sidebar" />
+      </aside>
     </div>
   );
 }

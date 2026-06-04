@@ -7,7 +7,16 @@ export const gameTabActive = "game-tab-active";
 export const gameTabInactive = "game-tab-inactive";
 export const gameHeroPanel = "game-hero-panel";
 export const gamePanel = "game-panel";
-export const gameIconBox = "border-game-accent-soft bg-game-accent-soft text-game-accent";
+export const gameIconBox =
+  "border border-border bg-secondary text-muted-foreground";
+
+export const surfaceCard = "surface-card";
+export const sectionTitle = "section-title";
+export const sectionCaption = "section-caption";
+export const metaLabel = "meta-label";
+export const toolbarButton = "toolbar-btn";
+export const filterChip = "filter-chip";
+export const overviewSection = "overview-section";
 
 export type GameThemeConfig = {
   name: string;

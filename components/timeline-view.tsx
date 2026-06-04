@@ -11,7 +11,7 @@ import {
   getTimelineWindow,
   type CrossGameTimelineEntry,
 } from "@/lib/cross-game";
-import { GAME_CONFIG, GAME_IDS } from "@/lib/game-config";
+import { GAME_CONFIG, GAME_IDS, metaLabel, surfaceCard, toolbarButton } from "@/lib/game-config";
 import { formatDate, formatDateTime } from "@/lib/format";
 import type { GameData, GameId } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -70,18 +70,16 @@ function TimelineListItem({
       <div className="flex min-w-0 items-start gap-3">
         <div
           data-game-theme={entry.gameId}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-border/50 bg-card/40"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border bg-secondary"
         >
           <GameIcon gameId={entry.gameId} className="h-4 w-4 text-game-accent" />
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+            <span className={metaLabel}>
               {config.shortName} · {CATEGORY_LABELS[entry.category]}
             </span>
-            <span className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-              {entry.status}
-            </span>
+            <span className={metaLabel}>{entry.status}</span>
           </div>
           <p className="mt-0.5 text-sm font-medium leading-snug text-foreground">{entry.label}</p>
           {entry.sublabel && (
@@ -101,7 +99,7 @@ function TimelineListItem({
       <button
         type="button"
         onClick={() => onSelectGame(entry.gameId)}
-        className="interactive-card w-full rounded-xl border border-border/50 bg-card/40 p-3 text-left"
+        className={`interactive-card w-full ${surfaceCard} p-3 text-left`}
       >
         {content}
       </button>
@@ -109,7 +107,7 @@ function TimelineListItem({
   }
 
   return (
-    <div className="rounded-xl border border-border/50 bg-card/40 p-3">
+    <div className={`${surfaceCard} p-3`}>
       {content}
     </div>
   );
@@ -133,7 +131,7 @@ function TimelineGantt({
   }
 
   return (
-    <div className="hidden overflow-x-auto rounded-xl border border-border/50 bg-card/30 p-4 lg:block">
+    <div className={`hidden overflow-x-auto ${surfaceCard} p-4 lg:block`}>
       <div className="mb-3 flex justify-between text-xs text-muted-foreground">
         <span>{formatDate(windowStart)}</span>
         <span>Today</span>
@@ -279,12 +277,12 @@ export function CrossGameAlerts({ allData, onSelectGame, limit }: CrossGameAlert
           <>
             <div
               data-game-theme={alert.gameId}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border/50 bg-card/40"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border bg-secondary"
             >
               <GameIcon gameId={alert.gameId} className="h-3.5 w-3.5 text-game-accent" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+              <p className={metaLabel}>
                 {GAME_CONFIG[alert.gameId].shortName} · {label}
               </p>
               <p className="truncate text-sm font-medium text-foreground">{alert.name}</p>
@@ -312,7 +310,7 @@ export function CrossGameAlerts({ allData, onSelectGame, limit }: CrossGameAlert
               href={alert.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="interactive-card flex items-center gap-3 rounded-xl border border-border/50 bg-card/40 px-3 py-2.5"
+              className={`interactive-card flex items-center gap-3 ${surfaceCard} px-3 py-2.5`}
             >
               {inner}
             </a>
@@ -325,7 +323,7 @@ export function CrossGameAlerts({ allData, onSelectGame, limit }: CrossGameAlert
               key={alert.id}
               type="button"
               onClick={() => onSelectGame(alert.gameId)}
-              className="interactive-card flex w-full items-center gap-3 rounded-xl border border-border/50 bg-card/40 px-3 py-2.5 text-left"
+              className={`interactive-card flex w-full items-center gap-3 ${surfaceCard} px-3 py-2.5 text-left`}
             >
               {inner}
             </button>
@@ -335,7 +333,7 @@ export function CrossGameAlerts({ allData, onSelectGame, limit }: CrossGameAlert
         return (
           <div
             key={alert.id}
-            className="flex items-center gap-3 rounded-xl border border-border/50 bg-card/40 px-3 py-2.5"
+            className={`flex items-center gap-3 ${surfaceCard} px-3 py-2.5`}
           >
             {inner}
           </div>
@@ -349,14 +347,14 @@ export function TimelinePageHeader({ className }: { className?: string }) {
   return (
     <div className={cn("flex items-center justify-between gap-3", className)}>
       <div>
-        <h1 className="text-xl font-bold text-foreground sm:text-2xl">Cross-game timeline</h1>
+        <h1 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">Cross-game timeline</h1>
         <p className="mt-1 text-sm text-muted-foreground">
           Banners, events, and milestones across all tracked games.
         </p>
       </div>
       <Link
         href="/"
-        className="shrink-0 rounded-lg border border-border/60 bg-card/40 px-3 py-2 text-xs font-medium text-foreground transition-colors hover:bg-card/70"
+        className={`shrink-0 ${toolbarButton}`}
       >
         ← Dashboard
       </Link>
