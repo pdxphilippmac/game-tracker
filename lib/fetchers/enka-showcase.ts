@@ -7,7 +7,7 @@ import type {
   ShowcaseErrorCode,
   ShowcaseGameId,
 } from "@/lib/showcase-types";
-import { isValidShowcaseUid, normalizeShowcaseUid } from "@/lib/showcase-uid";
+import { isValidShowcaseUid, normalizeShowcaseUid, SHOWCASE_UID_MAX_LENGTH, SHOWCASE_UID_MIN_LENGTH } from "@/lib/showcase-uid";
 
 const ENKA_API = "https://enka.network/api";
 const USER_AGENT = "GachaTracker/1.0 (game-news-app)";
@@ -225,7 +225,7 @@ export async function fetchPlayerShowcase(
 
   if (!isValidShowcaseUid(uid)) {
     throw new ShowcaseFetchError(
-      "UID must be 8–12 digits.",
+      `UID must be ${SHOWCASE_UID_MIN_LENGTH}–${SHOWCASE_UID_MAX_LENGTH} digits.`,
       "invalid_uid",
       400,
     );

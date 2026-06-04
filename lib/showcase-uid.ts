@@ -2,14 +2,29 @@ import type { ShowcaseGameId } from "@/lib/showcase-types";
 
 const STORAGE_KEY = "gacha-tracker-showcase-uids";
 
+export const SHOWCASE_UID_MIN_LENGTH = 8;
+export const SHOWCASE_UID_MAX_LENGTH = 12;
+
 type StoredUids = Partial<Record<ShowcaseGameId, string>>;
 
 export function isValidShowcaseUid(uid: string): boolean {
-  return /^\d{8,12}$/.test(uid.trim());
+  const normalized = normalizeShowcaseUid(uid);
+  return (
+    normalized.length >= SHOWCASE_UID_MIN_LENGTH &&
+    normalized.length <= SHOWCASE_UID_MAX_LENGTH &&
+    /^\d+$/.test(normalized)
+  );
 }
 
 export function normalizeShowcaseUid(uid: string): string {
-  return uid.trim();
+  return uid.trim().replace(/\D/g, "").slice(0, SHOWCASE_UID_MAX_LENGTH);
+}
+
+export function getShowcaseUidHint(gameId: ShowcaseGameId): string {
+  if (gameId === "zzz") {
+    return "10 digits (Zenless Zone Zero)";
+  }
+  return "9 digits (Honkai: Star Rail)";
 }
 
 export function getStoredShowcaseUid(gameId: ShowcaseGameId): string | null {

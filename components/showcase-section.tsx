@@ -7,11 +7,15 @@ import { Button } from "@/components/ui/button";
 import { ShowcaseCharacterDetail } from "@/components/showcase-character-detail";
 import { fetchPlayerShowcaseClient } from "@/lib/showcase-fetcher";
 import { gameAccentText, gamePanel } from "@/lib/game-config";
+import { SHOWCASE_PROFILE_MAX_SLOTS } from "@/lib/showcase-games";
 import {
+  getShowcaseUidHint,
   getStoredShowcaseUid,
   isValidShowcaseUid,
   normalizeShowcaseUid,
   setStoredShowcaseUid,
+  SHOWCASE_UID_MAX_LENGTH,
+  SHOWCASE_UID_MIN_LENGTH,
 } from "@/lib/showcase-uid";
 import type { ShowcaseGameId } from "@/lib/showcase-types";
 import { cn } from "@/lib/utils";
@@ -71,7 +75,9 @@ export function ShowcaseSection({ gameId }: ShowcaseSectionProps) {
       const uid = normalizeShowcaseUid(inputUid);
 
       if (!isValidShowcaseUid(uid)) {
-        setFormError("UID must be 8–12 digits.");
+        setFormError(
+          `UID must be ${SHOWCASE_UID_MIN_LENGTH}–${SHOWCASE_UID_MAX_LENGTH} digits (${getShowcaseUidHint(gameId)}).`,
+        );
         return;
       }
 
@@ -102,7 +108,8 @@ export function ShowcaseSection({ gameId }: ShowcaseSectionProps) {
       <Card className={cn("border-border/50 bg-card/50 backdrop-blur-sm", gamePanel)}>
         <CardContent className="space-y-4 p-4 sm:p-5">
           <p className="text-sm text-muted-foreground">
-            Enter your in-game UID. Data comes from{" "}
+            Loads characters from your{" "}
+            <span className="font-medium text-foreground">in-game profile showcase</span> via{" "}
             <a
               href="https://enka.network"
               className="underline underline-offset-2 hover:text-foreground"
@@ -111,16 +118,20 @@ export function ShowcaseSection({ gameId }: ShowcaseSectionProps) {
             >
               Enka.Network
             </a>
-            . Your Character Showcase must be enabled in-game.
+            . Showcase must be enabled in game settings. Only up to{" "}
+            {SHOWCASE_PROFILE_MAX_SLOTS} characters in showcase slots are available — not your full account roster.
           </p>
 
-          <form className="flex flex-col gap-3 sm:flex-row sm:items-end" onSubmit={handleSubmit}>
-            <div className="min-w-0 flex-1">
+          <form className="space-y-3" onSubmit={handleSubmit}>
+            <div>
               <label
                 htmlFor={`showcase-uid-${gameId}`}
                 className="mb-1.5 block text-xs font-medium text-muted-foreground"
               >
                 UID
+                <span className="ml-1.5 font-normal text-muted-foreground/80">
+                  ({getShowcaseUidHint(gameId)})
+                </span>
               </label>
               <input
                 id={`showcase-uid-${gameId}`}
@@ -128,11 +139,17 @@ export function ShowcaseSection({ gameId }: ShowcaseSectionProps) {
                 inputMode="numeric"
                 pattern="[0-9]*"
                 autoComplete="off"
-                placeholder={gameId === "zzz" ? "e.g. 1504787828" : "e.g. 717141410"}
+                maxLength={SHOWCASE_UID_MAX_LENGTH}
+                placeholder={gameId === "zzz" ? "1504787828" : "717141410"}
                 value={inputUid}
-                onChange={(event) => setInputUid(event.target.value.replace(/\D/g, ""))}
-                className="w-full rounded-lg border border-border/60 bg-background/60 px-3 py-2 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                onChange={(event) => setInputUid(normalizeShowcaseUid(event.target.value))}
+                className="w-full min-w-0 rounded-lg border border-border/60 bg-background/60 px-3 py-2 font-mono text-base tabular-nums tracking-wide text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
               />
+              {inputUid.length > 0 && (
+                <p className="mt-1 text-[11px] tabular-nums text-muted-foreground">
+                  {inputUid.length}/{SHOWCASE_UID_MAX_LENGTH} digits
+                </p>
+              )}
               {formError && (
                 <p className="mt-1.5 text-xs text-destructive" role="alert">
                   {formError}
@@ -140,7 +157,7 @@ export function ShowcaseSection({ gameId }: ShowcaseSectionProps) {
               )}
             </div>
 
-            <div className="flex shrink-0 gap-2">
+            <div className="flex flex-wrap gap-2">
               <Button type="submit" disabled={isLoading || isValidating}>
                 {isLoading || isValidating ? "Loading…" : "Load"}
               </Button>
@@ -165,7 +182,7 @@ export function ShowcaseSection({ gameId }: ShowcaseSectionProps) {
             <div className="space-y-4 border-t border-border/40 pt-4">
               <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                 <p className="text-lg font-semibold text-foreground">{data.nickname}</p>
-                <p className="text-sm text-muted-foreground">
+                <p className="font-mono text-sm tabular-nums text-muted-foreground">
                   UID {data.uid}
                   {data.level > 0 && ` · Lv. ${data.level}`}
                   {data.worldLevel !== undefined && ` · WL ${data.worldLevel}`}
@@ -181,19 +198,39 @@ export function ShowcaseSection({ gameId }: ShowcaseSectionProps) {
               {data.showcaseEmpty ? (
                 <p className="text-sm text-amber-200/90">
                   No characters in showcase. Enable Character Showcase in game settings
-                  and add characters to your display slots.
+                  and add characters to your profile display slots (up to{" "}
+                  {SHOWCASE_PROFILE_MAX_SLOTS}).
                 </p>
               ) : (
-                <ul className="flex flex-col gap-3">
-                  {data.characters.map((character) => (
-                    <li key={character.id}>
-                      <ShowcaseCharacterDetail
-                        character={character}
-                        gameId={gameId}
-                      />
-                    </li>
-                  ))}
-                </ul>
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    Showing{" "}
+                    <span className="font-medium text-foreground">
+                      {data.characters.length}
+                    </span>{" "}
+                    character{data.characters.length === 1 ? "" : "s"} from your profile
+                    showcase
+                    {data.characters.length >= SHOWCASE_PROFILE_MAX_SLOTS
+                      ? " (all slots filled)"
+                      : ` (up to ${SHOWCASE_PROFILE_MAX_SLOTS} in-game)`}
+                    .
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    To show different characters here, swap them in your profile showcase
+                    in {gameId === "zzz" ? "Zenless Zone Zero" : "Honkai: Star Rail"} — Enka
+                    cannot read characters outside those display slots.
+                  </p>
+                  <ul className="flex flex-col gap-3">
+                    {data.characters.map((character) => (
+                      <li key={character.id}>
+                        <ShowcaseCharacterDetail
+                          character={character}
+                          gameId={gameId}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </>
               )}
 
               <p className="text-[11px] text-muted-foreground">
